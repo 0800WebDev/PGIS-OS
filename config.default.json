@@ -1,10 +1,12 @@
 {
-	"apps": [
-		"apps/fsapp.app",
-		"apps/marketplace.app",
-		"apps/ashell.app",
-		"apps/v86-terminal.app"
-	],
+"apps": [
+  "apps/fsapp.app",
+  "apps/marketplace.app",
+  "apps/ashell.app",
+  "apps/v86-terminal.app",
+  "apps/zinc.app",
+  "apps/pgis.app"
+],
 	"libs": [
 		"/apps/libfileview.lib",
 		"/apps/libfilepicker.lib",
@@ -18,13 +20,24 @@
 		"/bin/vista.ajs",
 		"/bin/anuractrl.ajs"
 	],
-	"defaultsettings": {
-		"use-sw-cache": false,
-		"applist": ["anura.browser", "anura.settings", "anura.fsapp"],
-		"clampWindows": true,
-		"launcher-keybind": true,
-		"relay-url": "wss://relay.widgetry.org/"
-	},
+	
+"defaultsettings": {
+  "use-sw-cache": false,
+  "applist": [
+    "0800.pgis2",
+	"0800.pgis3",
+	"0800.zinc",
+    "anura.fsapp",
+    "anura.settings",
+    "anura.ashell"
+  ],
+  "clampWindows": true,
+  "launcher-keybind": true,
+  "relay-url": "wss://relay.widgetry.org/",
+  "x86-disabled": false,
+  "explore-shown": true
+},
+
 	"x86": {
 		"alpine": {
 			"bzimage": "/x86images/alpine-boot/vmlinuz-virt",

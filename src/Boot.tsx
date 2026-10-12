@@ -465,11 +465,13 @@ window.addEventListener("load", async () => {
 
 document.addEventListener("anura-boot-completed", async () => {
 	AnuradHelpers.setStage("anura.boot");
-	if (anura.settings.get("oobe-complete")) {
-		document.dispatchEvent(new Event("anura-login-completed"));
-	} else {
-		document.body.appendChild(oobeview.element);
-	}
+if (!anura.settings.get("oobe-complete")) {
+  await anura.settings.set("oobe-complete", true);
+  await anura.settings.set("handler-migration-complete", true);
+  await anura.settings.set("explore-shown", true);
+}
+
+document.dispatchEvent(new Event("anura-login-completed"));
 });
 
 document.addEventListener("anura-login-completed", async () => {
