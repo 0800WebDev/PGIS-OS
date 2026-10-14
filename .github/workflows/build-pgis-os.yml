@@ -25,9 +25,11 @@ jobs:
         with:
           node-version: "24"
 
+      
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@nightly
         with:
+          components: rust-src
           targets: wasm32-unknown-unknown,i686-unknown-linux-gnu
 
       - name: Install build dependencies
