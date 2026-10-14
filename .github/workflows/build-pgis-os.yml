@@ -94,6 +94,17 @@ jobs:
           cp -a external/anura-browserjs/packages/chrome/dist \
             deploy/external/anura-browserjs/packages/chrome/
 
+      - name: Remove recursive boot symlink
+        run: |
+          set -e
+          find deploy/build/x86images/alpine-boot \
+            -type l -name boot -print -delete
+          test -f deploy/build/x86images/alpine-boot/vmlinuz-virt
+          test -f deploy/build/x86images/alpine-boot/initramfs-virt
+          test -d deploy/build/x86images/alpine-rootfs
+
+
+
       - name: Publish deployment branch
         uses: peaceiris/actions-gh-pages@v4
         with:
