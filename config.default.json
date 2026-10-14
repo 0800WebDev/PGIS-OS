@@ -4,8 +4,10 @@
   "apps/marketplace.app",
   "apps/ashell.app",
   "apps/v86-terminal.app",
-  "apps/zinc.app",
-  "apps/pgis.app"
+  "apps/pgis2.app",
+  "apps/pgis3.app",
+  "apps/games.app",
+  "apps/zinc.app"
 ],
 	"libs": [
 		"/apps/libfileview.lib",
