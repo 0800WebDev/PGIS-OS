@@ -89,6 +89,7 @@ jobs:
           cp -a server/server.js server/package.json deploy/server/
           cp -a public/. deploy/public/
           cp -a build/. deploy/build/
+          rm -f deploy/build/x86images/alpine-rootfs.bin
           cp -a bin/. deploy/bin/
           cp -a apps/. deploy/apps/
           cp -a external/anura-browserjs/packages/chrome/dist \
