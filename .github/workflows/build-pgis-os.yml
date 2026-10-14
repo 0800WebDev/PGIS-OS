@@ -1,0 +1,93 @@
+
+name: Build and publish PGIS OS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout repository and submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          targets: wasm32-unknown-unknown,i686-unknown-linux-gnu
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            make \
+            jq \
+            uuid-runtime \
+            binaryen \
+            clang \
+            gcc-multilib \
+            openjdk-17-jre-headless \
+            wget \
+            curl \
+            pkg-config \
+            libssl-dev
+
+      - name: Install PNPM and WebAssembly tools
+        run: |
+          npm install -g pnpm
+          cargo install --locked wasm-bindgen-cli --version 0.2.105
+          cargo install --git https://github.com/r58Playz/wasm-snip --locked wasm-snip
+
+      - name: Build PGIS OS
+        run: |
+          cp config.default.json public/config.json
+          make all
+
+      - name: Prepare deployment with original paths
+        run: |
+          set -e
+
+          test -f public/config.json
+          test -f build/MILESTONE
+          test -f build/COMMIT
+          test -f external/anura-browserjs/packages/chrome/dist/index.html
+
+          rm -rf deploy
+          mkdir -p \
+            deploy/server \
+            deploy/public \
+            deploy/build \
+            deploy/bin \
+            deploy/apps \
+            deploy/external/anura-browserjs/packages/chrome
+
+          cp -a server/server.js server/package.json deploy/server/
+          cp -a public/. deploy/public/
+          cp -a build/. deploy/build/
+          cp -a bin/. deploy/bin/
+          cp -a apps/. deploy/apps/
+          cp -a external/anura-browserjs/packages/chrome/dist \
+            deploy/external/anura-browserjs/packages/chrome/
+
+      - name: Publish deployment branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: deploy
+          publish_dir: ./deploy
+          force_orphan: true
