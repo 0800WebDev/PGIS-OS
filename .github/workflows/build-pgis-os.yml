@@ -56,7 +56,15 @@ jobs:
       - name: Build PGIS OS
         run: |
           cp config.default.json public/config.json
-          make all
+          make -o lint all
+
+
+      - name: Build Linux emulator root filesystem
+        run: |
+          sudo apt-get install -y e2fsprogs util-linux
+          sudo chmod 666 /var/run/docker.sock
+          make rootfs-alpine
+
 
       - name: Prepare deployment with original paths
         run: |
