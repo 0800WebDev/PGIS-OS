@@ -3,7 +3,7 @@ import path from "node:path";
 import express from "express";
 import { server as wisp } from "@mercuryworkshop/wisp-js/server";
 
-const __dirname = path.join(process.cwd(), "..");
+const __dirname = path.resolve(__dirname, "..");
 
 // Debug a local app folder and mount it to /apps, patching config.json to force load it
 const debugAppFolder = process.env.DEBUG_APP_FOLDER;
