@@ -90,14 +90,13 @@ a{
 <body>
 
 <div id="browser">
-     <b>Imported from <a href="https://pgis3.vercel.app" target="_blank">pgis 3</a></b>
-       <div id="games"></div>
+<div id="games"></div>
 </div>
 
 <div id="launcher"></div>
 
 <script>
-const BASE = "https://pgis3.vercel.app";
+const BASE = "https://homework555.netlify.app/";
 
 async function loadGames() {
     const names = await fetch(`${BASE}/games.json`).then(r => r.json());
