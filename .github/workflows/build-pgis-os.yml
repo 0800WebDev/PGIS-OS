@@ -61,6 +61,24 @@ jobs:
           make -o lint all
 
 
+      - name: Fix cross-origin iframe theme handling
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path("build/lib/api/Theme.js")
+          s = p.read_text()
+
+          old = 'el.contentWindow?.document.dispatchEvent(new Event("anura-theme-change"));'
+          new = 'try { el.contentWindow.document.dispatchEvent(new Event("anura-theme-change")); } catch { /* Ignore cross-origin iframes. */ }'
+
+          if old not in s:
+              raise SystemExit(f"Expected theme code not found in {p}")
+
+          p.write_text(s.replace(old, new))
+          PY
+
+
       - name: Build Linux emulator root filesystem
         run: |
           sudo apt-get install -y e2fsprogs util-linux
