@@ -1,5 +1,9 @@
 {
 	"wallpapers": [
+        {
+            "name": "particles (dynamic)",
+            "url": "particles://dynamic"
+        },
 		{
 			"name": "Nocturne",
 			"url": "/assets/wallpaper/bundled_wallpapers/Nocturne.jpg"
