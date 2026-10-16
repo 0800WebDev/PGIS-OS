@@ -30,10 +30,11 @@
 }
 
 #launcher-button img {
-	border-radius: 50%;
-	height: 15px;
-	width: 15px;
-	opacity: 100;
+    border-radius: 50%;
+    height: 22px;
+    width: 22px;
+    opacity: 1;
+    object-fit: contain;
 }
 .hw-screen {
 	height: 100%;
