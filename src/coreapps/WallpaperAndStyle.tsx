@@ -611,8 +611,7 @@ class WallpaperAndStyle extends App {
 			currWallpaperName === undefined ||
 			currWallpaperName === null
 		) {
-			currWallpaper = "/assets/wallpaper/bundled_wallpapers/Nocturne.jpg";
-			currWallpaperName = "Nocturne";
+			currWallpaperName = "particles (dynamic)";
 			anura.settings.set("wallpaper", currWallpaper);
 			anura.settings.set("wallpaper-name", currWallpaperName);
 		}
