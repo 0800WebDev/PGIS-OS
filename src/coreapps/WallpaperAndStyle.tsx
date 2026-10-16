@@ -656,14 +656,180 @@ class WallpaperAndStyle extends App {
 			?.classList.add("selected");
 	}
 
-	setWallpaper(url: string) {
-		window.document.documentElement.style.backgroundColor = anura.settings.get(
-			"wallpaper-contain-color",
-		); // this might not be ideal but it works
-		window.document.body.style.background = `url("${url}") no-repeat center center fixed`;
-		window.document.body.style.backgroundSize =
-			anura.settings.get("wallpaper-fit");
-	}
+
+  private async updateParticlesBackground(): Promise<void> {
+    const containerId = "pgis-particles-background";
+    const enabled =
+      anura.settings.get("wallpaper-name") === "particles (dynamic)";
+
+    const w = window as any;
+    let container = document.getElementById(containerId);
+
+    // Remove the particles when a different wallpaper is selected.
+    if (!enabled) {
+      if (Array.isArray(w.pJSDom)) {
+        for (let i = w.pJSDom.length - 1; i >= 0; i--) {
+          const instance = w.pJSDom[i]?.pJS;
+
+          if (
+            instance?.canvas?.el?.parentElement?.id === containerId
+          ) {
+            instance.fn.vendors.destroypJS();
+            w.pJSDom.splice(i, 1);
+          }
+        }
+      }
+
+      container?.remove();
+      return;
+    }
+
+    // Create a separate, transparent layer.
+    if (!container) {
+      container = document.createElement("div");
+      container.id = containerId;
+
+      Object.assign(container.style, {
+        position: "fixed",
+        inset: "0",
+        width: "100%",
+        height: "100%",
+        zIndex: "0",
+        pointerEvents: "none",
+        background: "transparent",
+        overflow: "hidden",
+      });
+
+      document.body.prepend(container);
+    }
+
+    // Load particles.js only once.
+    if (!w.particlesJS) {
+      const scriptId = "pgis-particles-js-script";
+      let script = document.getElementById(
+        scriptId,
+      ) as HTMLScriptElement | null;
+
+      await new Promise<void>((resolve, reject) => {
+        if (script) {
+          script.addEventListener("load", () => resolve(), {
+            once: true,
+          });
+          script.addEventListener(
+            "error",
+            () => reject(new Error("Could not load particles.js")),
+            { once: true },
+          );
+          return;
+        }
+
+        script = document.createElement("script");
+        script.id = scriptId;
+        script.src =
+          "https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js";
+        script.onload = () => resolve();
+        script.onerror = () =>
+          reject(new Error("Could not load particles.js"));
+
+        document.head.appendChild(script);
+      });
+    }
+
+    // The wallpaper might have changed while the script was loading.
+    if (
+      anura.settings.get("wallpaper-name") !== "particles (dynamic)" ||
+      !document.getElementById(containerId)
+    ) {
+      return;
+    }
+
+    // Avoid initializing the effect more than once.
+    if (
+      Array.isArray(w.pJSDom) &&
+      w.pJSDom.some(
+        (entry: any) =>
+          entry?.pJS?.canvas?.el?.parentElement?.id === containerId,
+      )
+    ) {
+      return;
+    }
+
+    w.particlesJS(containerId, {
+      particles: {
+        number: {
+          value: 100,
+          density: {
+            enable: true,
+            value_area: 800,
+          },
+        },
+        color: {
+          value: "#ffffff",
+        },
+        shape: {
+          type: "circle",
+        },
+        opacity: {
+          value: 0.08,
+          random: true,
+        },
+        size: {
+          value: 3,
+          random: true,
+        },
+        line_linked: {
+          enable: true,
+          distance: 150,
+          color: "#ffffff",
+          opacity: 0.4,
+          width: 1,
+        },
+        move: {
+          enable: true,
+          speed: 1.5,
+          direction: "none",
+          straight: false,
+          out_mode: "out",
+        },
+      },
+      interactivity: {
+        detect_on: "window",
+        events: {
+          onhover: {
+            enable: true,
+            mode: "repulse",
+          },
+          onclick: {
+            enable: false,
+          },
+        },
+        modes: {
+          repulse: {
+            distance: 120,
+            duration: 0.5,
+          },
+        },
+      },
+      retina_detect: true,
+    });
+  }
+
+	
+  setWallpaper(url: string) {
+    window.document.documentElement.style.backgroundColor =
+      anura.settings.get("wallpaper-contain-color");
+
+    window.document.body.style.background =
+      `url("${url}") no-repeat center center fixed`;
+
+    window.document.body.style.backgroundSize =
+      anura.settings.get("wallpaper-fit");
+
+    void this.updateParticlesBackground().catch((error) => {
+      console.error("Failed to update particles background:", error);
+    });
+  }
+
 
 	async importTheme() {
 		// Here be dragons
