@@ -659,8 +659,8 @@ class WallpaperAndStyle extends App {
   private async updateParticlesBackground(): Promise<void> {
     const containerId = "pgis-particles-background";
     const enabled =
-      anura.settings.get("wallpaper-name") === "particles (dynamic)";
-
+    anura.settings.get("wallpaper") === "particles://dynamic";
+	  
     const w = window as any;
     let container = document.getElementById(containerId);
 
@@ -814,20 +814,25 @@ class WallpaperAndStyle extends App {
   }
 
 	
-  setWallpaper(url: string) {
-    window.document.documentElement.style.backgroundColor =
-      anura.settings.get("wallpaper-contain-color");
 
-    window.document.body.style.background =
-      `url("${url}") no-repeat center center fixed`;
+setWallpaper(url: string) {
+    const isParticles = url === "particles://dynamic";
+
+    window.document.documentElement.style.backgroundColor =
+        anura.settings.get("wallpaper-contain-color");
+
+    window.document.body.style.background = isParticles
+        ? "transparent"
+        : `url("${url}") no-repeat center center fixed`;
 
     window.document.body.style.backgroundSize =
-      anura.settings.get("wallpaper-fit");
+        anura.settings.get("wallpaper-fit");
 
     void this.updateParticlesBackground().catch((error) => {
-      console.error("Failed to update particles background:", error);
+        console.error("Failed to update particles background:", error);
     });
-  }
+}
+
 
 
 	async importTheme() {
