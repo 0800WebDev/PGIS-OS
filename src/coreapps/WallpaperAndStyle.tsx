@@ -674,25 +674,25 @@ private async updateParticlesBackground(): Promise<void> {
         anura.settings.get("wallpaper") === "particles://dynamic";
 
     // Destroy any previous particles instance for this container.
-    if (Array.isArray(w.pJSDom)) {
-        for (let i = w.pJSDom.length - 1; i >= 0; i--) {
-            const instance = w.pJSDom[i]?.pJS;
-            const canvas = instance?.canvas?.el;
+if (Array.isArray(w.pJSDom)) {
+  for (let i = w.pJSDom.length - 1; i >= 0; i--) {
+    const instance = w.pJSDom[i]?.pJS;
 
-            if (
-                canvas &&
-                canvas.parentElement?.id === containerId
-            ) {
-                try {
-                    instance.fn.vendors.destroypJS();
-                } catch (error) {
-                    console.warn("Could not destroy old particles:", error);
-                }
+    if (instance?.canvas?.el?.parentElement?.id === containerId) {
+      try {
+        instance.fn.vendors.destroypJS();
+      } catch (error) {
+        console.warn("Failed to destroy particles instance:", error);
+      }
 
-                w.pJSDom.splice(i, 1);
-            }
-        }
+      if (Array.isArray(w.pJSDom)) {
+        w.pJSDom = w.pJSDom.filter(
+          (entry: any) => entry?.pJS !== instance,
+        );
+      }
     }
+  }
+}
 
     // Always remove the old container before rebuilding it.
     document.getElementById(containerId)?.remove();
@@ -800,6 +800,10 @@ private async updateParticlesBackground(): Promise<void> {
         return;
     }
 
+	if (!Array.isArray(w.pJSDom)) {
+		w.pJSDom = [];
+    }
+	
     w.particlesJS(containerId, {
         particles: {
             number: {
