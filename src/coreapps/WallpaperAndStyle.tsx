@@ -724,9 +724,7 @@ class WallpaperAndStyle extends App {
 
         script = document.createElement("script");
         script.id = scriptId;
-        script.src =
-          "https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js";
-        script.onload = () => resolve();
+        script.src = "/assets/js/particles.min.js";        script.onload = () => resolve();
         script.onerror = () =>
           reject(new Error("Could not load particles.js"));
 
