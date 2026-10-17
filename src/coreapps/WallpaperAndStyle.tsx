@@ -602,24 +602,26 @@ class WallpaperAndStyle extends App {
 		this.setWallpaper(wallpaperObj.url);
 	}
 
-	getCurrentWallpaper(): WallpaperObject {
-		let currWallpaper = anura.settings.get("wallpaper");
-		let currWallpaperName = anura.settings.get("wallpaper-name");
-		if (
-			currWallpaper === undefined ||
-			currWallpaper === null ||
-			currWallpaperName === undefined ||
-			currWallpaperName === null
-		) {
-			currWallpaperName = "particles (dynamic)";
-			anura.settings.set("wallpaper", currWallpaper);
-			anura.settings.set("wallpaper-name", currWallpaperName);
-		}
-		return {
-			name: currWallpaperName,
-			url: currWallpaper,
-		};
-	}
+getCurrentWallpaper(): WallpaperObject {
+    let currWallpaper = anura.settings.get("wallpaper");
+    let currWallpaperName = anura.settings.get("wallpaper-name");
+
+    if (
+        currWallpaper == null ||
+        currWallpaperName == null
+    ) {
+        currWallpaper = "particles://dynamic";
+        currWallpaperName = "particles (dynamic)";
+
+        anura.settings.set("wallpaper", currWallpaper);
+        anura.settings.set("wallpaper-name", currWallpaperName);
+    }
+
+    return {
+        name: currWallpaperName,
+        url: currWallpaper,
+    };
+}
 
 	async loadWallpaperManifest() {
 		const wallpaperManifest = await fetch(
@@ -816,15 +818,19 @@ class WallpaperAndStyle extends App {
 setWallpaper(url: string) {
     const isParticles = url === "particles://dynamic";
 
-    window.document.documentElement.style.backgroundColor =
+    document.documentElement.style.backgroundColor =
         anura.settings.get("wallpaper-contain-color");
 
-    window.document.body.style.background = isParticles
-        ? "transparent"
-        : `url("${url}") no-repeat center center fixed`;
+    if (isParticles) {
+        document.body.style.background = "transparent";
+        document.body.style.backgroundSize = "";
+    } else {
+        document.body.style.background =
+            `url("${url}") no-repeat center center fixed`;
 
-    window.document.body.style.backgroundSize =
-        anura.settings.get("wallpaper-fit");
+        document.body.style.backgroundSize =
+            anura.settings.get("wallpaper-fit");
+    }
 
     void this.updateParticlesBackground().catch((error) => {
         console.error("Failed to update particles background:", error);
