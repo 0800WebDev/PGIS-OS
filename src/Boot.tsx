@@ -41,7 +41,7 @@ channel.addEventListener("message", (msg) => {
             </head>
             <body>
             <div id="wrapper">
-            <h1>AnuraOS is already running in another tab</h1>
+            <h1>PGIS OS is already running in another tab</h1>
             <p>Please close the other tab and reload.</p>
             </div>
             </body>
@@ -199,7 +199,7 @@ window.addEventListener("load", async () => {
 					const tracker_br = document.getElementById("systemstatus-br")!;
 					tracker.style.display = "unset";
 					tracker_br.style.display = "unset";
-					tracker.innerText = "Anura is updating your system...";
+					tracker.innerText = "PGIS OS is updating your system...";
 					try {
 						await new anura.fs.Shell().promises.rm("/anura_files", {
 							recursive: true,
@@ -215,7 +215,7 @@ window.addEventListener("load", async () => {
 		} else {
 			// Domain is either expired or some non conformant milestone is being delivered (bad extension?)
 			// Either way, ignore and dont try and perform an update
-			console.log("Anura update poisoning detected...");
+			console.log("update poisoning detected...");
 		}
 	}
 	const isGitRev = (hash: string) => /^[0-9a-f]{7,40}$/i.test(hash);
@@ -278,7 +278,7 @@ window.addEventListener("load", async () => {
 			anura.notifications.add({
 				title: "Anura Update",
 				description:
-					"AnuraOS has been updated to a new version. Users are recommended to change the installation directory of their apps and libraries to /usr/ to ensure consistency with new installations.",
+					"PGIS OS has been updated to a new version. Users are recommended to change the installation directory of their apps and libraries to /usr/ to ensure consistency with new installations.",
 				timeout: "never",
 				buttons: [
 					{
@@ -513,10 +513,21 @@ document.addEventListener("anura-login-completed", async () => {
 	(anura.dialog as any) = dialogApp;
 	AnuradHelpers.setReady("anura.dialog");
 
-	wallpaper.setWallpaper(
-		anura.settings.get("wallpaper") ||
-			"/assets/wallpaper/bundled_wallpapers/Nocturne.jpg",
-	);
+const savedWallpaper = anura.settings.get("wallpaper");
+
+if (!savedWallpaper) {
+    await anura.settings.set("wallpaper", "particles://dynamic");
+    await anura.settings.set("wallpaper-name", "particles (dynamic)");
+} else if (
+    savedWallpaper === "particles://dynamic" &&
+    !anura.settings.get("wallpaper-name")
+) {
+    await anura.settings.set("wallpaper-name", "particles (dynamic)");
+}
+
+wallpaper.setWallpaper(
+    anura.settings.get("wallpaper"),
+);
 
 	for (const bin of anura.config.bin) {
 		const path = bin.split("/").slice(-1)[0];
