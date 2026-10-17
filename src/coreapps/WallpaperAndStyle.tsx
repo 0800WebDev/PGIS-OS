@@ -643,8 +643,12 @@ getCurrentWallpaper(): WallpaperObject {
 
 		if (currWallpaperImage === undefined || currWallpaperName === undefined)
 			return;
-		currWallpaperImage.setAttribute("src", currWallpaper.url);
-		(currWallpaperName as HTMLHeadingElement).innerText = currWallpaper.name;
+currWallpaperImage.setAttribute(
+    "src",
+    currWallpaper.url === "particles://dynamic"
+        ? "/assets/wallpaper/bundled_wallpapers/Nocturne.jpg"
+        : currWallpaper.url,
+);		(currWallpaperName as HTMLHeadingElement).innerText = currWallpaper.name;
 
 		// this is where it gets way jankier
 		Array.from(document.getElementsByClassName("wallpaper-list-item")) // woah that is jank
@@ -658,39 +662,49 @@ getCurrentWallpaper(): WallpaperObject {
 	}
 
 
-  private async updateParticlesBackground(): Promise<void> {
+private particlesUpdateId = 0;
+
+private async updateParticlesBackground(): Promise<void> {
     const containerId = "pgis-particles-background";
-    const enabled =
-    anura.settings.get("wallpaper") === "particles://dynamic";
-	  
+    const scriptId = "pgis-particles-js-script";
     const w = window as any;
-    let container = document.getElementById(containerId);
+    const updateId = ++this.particlesUpdateId;
 
-    // Remove the particles when a different wallpaper is selected.
-    if (!enabled) {
-      if (Array.isArray(w.pJSDom)) {
+    const isEnabled = () =>
+        anura.settings.get("wallpaper") === "particles://dynamic";
+
+    // Destroy any previous particles instance for this container.
+    if (Array.isArray(w.pJSDom)) {
         for (let i = w.pJSDom.length - 1; i >= 0; i--) {
-          const instance = w.pJSDom[i]?.pJS;
+            const instance = w.pJSDom[i]?.pJS;
+            const canvas = instance?.canvas?.el;
 
-          if (
-            instance?.canvas?.el?.parentElement?.id === containerId
-          ) {
-            instance.fn.vendors.destroypJS();
-            w.pJSDom.splice(i, 1);
-          }
+            if (
+                canvas &&
+                canvas.parentElement?.id === containerId
+            ) {
+                try {
+                    instance.fn.vendors.destroypJS();
+                } catch (error) {
+                    console.warn("Could not destroy old particles:", error);
+                }
+
+                w.pJSDom.splice(i, 1);
+            }
         }
-      }
-
-      container?.remove();
-      return;
     }
 
-    // Create a separate, transparent layer.
-    if (!container) {
-      container = document.createElement("div");
-      container.id = containerId;
+    // Always remove the old container before rebuilding it.
+    document.getElementById(containerId)?.remove();
 
-      Object.assign(container.style, {
+    if (!isEnabled()) {
+        return;
+    }
+
+    const container = document.createElement("div");
+    container.id = containerId;
+
+    Object.assign(container.style, {
         position: "fixed",
         inset: "0",
         width: "100%",
@@ -699,119 +713,154 @@ getCurrentWallpaper(): WallpaperObject {
         pointerEvents: "none",
         background: "transparent",
         overflow: "hidden",
-      });
+    });
 
-      document.body.prepend(container);
-    }
+    document.body.prepend(container);
 
-    // Load particles.js only once.
+    // Load the local library, waiting for it if another call is loading it.
     if (!w.particlesJS) {
-      const scriptId = "pgis-particles-js-script";
-      let script = document.getElementById(
-        scriptId,
-      ) as HTMLScriptElement | null;
+        let script = document.getElementById(
+            scriptId,
+        ) as HTMLScriptElement | null;
 
-      await new Promise<void>((resolve, reject) => {
-        if (script) {
-          script.addEventListener("load", () => resolve(), {
-            once: true,
-          });
-          script.addEventListener(
-            "error",
-            () => reject(new Error("Could not load particles.js")),
-            { once: true },
-          );
-          return;
+        if (script && script.dataset.failed === "true") {
+            script.remove();
+            script = null;
         }
 
-        script = document.createElement("script");
-        script.id = scriptId;
-        script.src = "/assets/js/particles.min.js";        script.onload = () => resolve();
-        script.onerror = () =>
-          reject(new Error("Could not load particles.js"));
+        if (!script) {
+            script = document.createElement("script");
+            script.id = scriptId;
+            script.src = "/assets/js/particles.min.js";
+            script.dataset.loaded = "false";
 
-        document.head.appendChild(script);
-      });
+            document.head.appendChild(script);
+        }
+
+        if (!w.particlesJS) {
+            await new Promise<void>((resolve, reject) => {
+                if (w.particlesJS) {
+                    resolve();
+                    return;
+                }
+
+                const currentScript = script!;
+
+                const cleanup = () => {
+                    currentScript.removeEventListener("load", onLoad);
+                    currentScript.removeEventListener("error", onError);
+                };
+
+                const onLoad = () => {
+                    currentScript.dataset.loaded = "true";
+                    cleanup();
+
+                    if (w.particlesJS) {
+                        resolve();
+                    } else {
+                        reject(new Error(
+                            "particles.js loaded but particlesJS is unavailable",
+                        ));
+                    }
+                };
+
+                const onError = () => {
+                    currentScript.dataset.failed = "true";
+                    cleanup();
+                    reject(new Error("Could not load local particles.js"));
+                };
+
+                currentScript.addEventListener("load", onLoad);
+                currentScript.addEventListener("error", onError);
+
+                // Handle a script that finished loading before listeners
+                // were attached.
+                if (w.particlesJS) {
+                    cleanup();
+                    resolve();
+                } else if (
+                    currentScript.dataset.loaded === "true"
+                ) {
+                    cleanup();
+                    reject(new Error(
+                        "particles.js finished loading without particlesJS",
+                    ));
+                }
+            });
+        }
     }
 
-    // The wallpaper might have changed while the script was loading.
+    // Ignore stale requests if the wallpaper changed while loading.
     if (
-      anura.settings.get("wallpaper-name") !== "particles (dynamic)" ||
-      !document.getElementById(containerId)
+        updateId !== this.particlesUpdateId ||
+        !isEnabled() ||
+        !document.getElementById(containerId)
     ) {
-      return;
-    }
-
-    // Avoid initializing the effect more than once.
-    if (
-      Array.isArray(w.pJSDom) &&
-      w.pJSDom.some(
-        (entry: any) =>
-          entry?.pJS?.canvas?.el?.parentElement?.id === containerId,
-      )
-    ) {
-      return;
+        container.remove();
+        return;
     }
 
     w.particlesJS(containerId, {
-      particles: {
-        number: {
-          value: 100,
-          density: {
-            enable: true,
-            value_area: 800,
-          },
+        particles: {
+            number: {
+                value: 100,
+                density: {
+                    enable: true,
+                    value_area: 800,
+                },
+            },
+            color: { value: "#ffffff" },
+            shape: { type: "circle" },
+            opacity: { value: 0.08, random: true },
+            size: { value: 3, random: true },
+            line_linked: {
+                enable: true,
+                distance: 150,
+                color: "#ffffff",
+                opacity: 0.4,
+                width: 1,
+            },
+            move: {
+                enable: true,
+                speed: 1.5,
+                direction: "none",
+                straight: false,
+                out_mode: "out",
+            },
         },
-        color: {
-          value: "#ffffff",
+        interactivity: {
+            detect_on: "window",
+            events: {
+                onhover: {
+                    enable: true,
+                    mode: "repulse",
+                },
+                onclick: { enable: false },
+            },
+            modes: {
+                repulse: {
+                    distance: 120,
+                    duration: 0.5,
+                },
+            },
         },
-        shape: {
-          type: "circle",
-        },
-        opacity: {
-          value: 0.08,
-          random: true,
-        },
-        size: {
-          value: 3,
-          random: true,
-        },
-        line_linked: {
-          enable: true,
-          distance: 150,
-          color: "#ffffff",
-          opacity: 0.4,
-          width: 1,
-        },
-        move: {
-          enable: true,
-          speed: 1.5,
-          direction: "none",
-          straight: false,
-          out_mode: "out",
-        },
-      },
-      interactivity: {
-        detect_on: "window",
-        events: {
-          onhover: {
-            enable: true,
-            mode: "repulse",
-          },
-          onclick: {
-            enable: false,
-          },
-        },
-        modes: {
-          repulse: {
-            distance: 120,
-            duration: 0.5,
-          },
-        },
-      },
-      retina_detect: true,
+        retina_detect: true,
     });
-  }
+
+    // Ensure the library's canvas fills the transparent layer.
+    const canvas = container.querySelector("canvas");
+
+    if (canvas) {
+        Object.assign(canvas.style, {
+            position: "absolute",
+            inset: "0",
+            width: "100%",
+            height: "100%",
+            pointerEvents: "none",
+        });
+    }
+}
+
 
 	
 
