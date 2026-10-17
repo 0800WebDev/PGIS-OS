@@ -1,0 +1,14 @@
+
+{
+  "name": "Zinc Browser",
+  "type": "auto",
+  "package": "0800.zinc",
+  "index": "index.html",
+  "icon": "Zinc.png",
+  "wininfo": {
+    "title": "Zinc Browser",
+    "width": "1100px",
+    "height": "750px",
+    "resizable": true
+  }
+}

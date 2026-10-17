@@ -1,0 +1,3141 @@
+/*
+Zinc — Copyright © 2026 0800WebDev
+Licensed under the MIT License. See README.md or zinc://legal for terms.
+https://github.com/0800WebDev/zinc
+*/
+
+
+
+
+
+
+
+
+
+// =====================================================
+// CONFIGURATION - Gets from config.js
+// =====================================================
+const DEFAULT_WISP = window.SITE_CONFIG?.defaultWisp ?? "wss://pgis-wisp.joytree.site/";
+
+const WISP_SERVERS = [
+    {
+        group: "PGIS Wisp",
+        name: "Main",
+        url: "wss://pgis-wisp.joytree.site/"
+    },
+    {
+        group: "PGIS Wisp",
+        name: "1. Frankfurt (EU Central)",
+        url: "wss://pgis-wisp.onrender.com/"
+    },
+    {
+        group: "PGIS Wisp",
+        name: "2. Ohio (US East)",
+        url: "wss://pgis-wisp-2.onrender.com/"
+    },
+    {
+        group: "PGIS Wisp",
+        name: "3. Singapore (Southeast Asia)",
+        url: "wss://pgis-wisp-3.onrender.com/"
+    },
+    {
+        group: "PGIS Wisp",
+        name: "4. Oregon (US West)",
+        url: "wss://pgis-wisp-4.onrender.com/"
+    },
+    {
+        group: "PGIS Wisp",
+        url: "wss://pgis-wisp.bonto.run/"
+    },
+    
+    {
+        group: "PGIS Wisp",
+        url: "wss://pgis-wisp.getvoroa.com/"
+    },
+    
+    {
+        group: "PGIS Wisp",
+        url: "ws://us.cloud.enzonic.com:25847/"
+    },
+    
+    {
+        group: "PGIS Wisp",
+        url: "ws://78.154.103.49:11376/"
+    },
+    {
+        group: "Other",
+        name: "MercuryWorkshop",
+        url: "wss://wisp.mercurywork.shop/"
+    },
+    {
+        group: "Other",
+        name: "TOMP Bare Server (best for youtube)",
+        url: "wss://bare-server.fly.dev/wisp/"
+    },
+    {
+        group: "Other",
+        name: "PGIS proxy",
+        url: "wss://homework--spmspy0800.replit.app/wisp/"
+    },
+    {
+        group: "PeteZah Games",
+        url: "wss://petezahgames.com/wisp/"
+    },
+    {
+        group: "PeteZah Games",
+        url: "wss://3658729.ritebooks.com/wisp/"
+    },
+    {
+        group: "PeteZah Games",
+        url: "wss://info.videnom.com/wisp/"
+    },
+    {
+        group: "PeteZah Games",
+        url: "wss://sciencepark.cc/wisp/"
+    },
+    {
+        group: "PeteZah Games",
+        url: "wss://sciencenews.cc/wisp/"
+    },
+    {
+        group: "PeteZah Games",
+        url: "wss://homeworkhelp.cc/wisp/"
+    },
+    {
+        group: "PeteZah Games",
+        url: "wss://businessschool.cc/wisp/"
+    },
+    {
+        group: "PeteZah Games",
+        url: "wss://crypto-college.cc/wisp/"
+    },
+    {
+        group: "PeteZah Games",
+        url: "wss://fulcrumtheatreinc.com/wisp/"
+    },
+    {
+        group: "PeteZah Games",
+        url: "wss://info.hotelsunrisegrand.com/wisp/"
+    },
+    {
+        group: "PeteZah Games",
+        url: "wss://info.shop1stoponline.com/wisp/"
+    },
+    {
+        group: "Space",
+        url: "wss://gointospace.app/wisp/"
+    },
+    {
+        group: "Space",
+        url: "wss://places.vjason.com/wisp/"
+    },
+    {
+        group: "Space",
+        url: "wss://space.kkmsilvia.com/wisp/"
+    },
+    {
+        group: "Space",
+        url: "wss://space.asirargentina.com.ar/wisp/"
+    },
+    {
+        group: "Space",
+        url: "wss://space.colegioitalocomposto.cl/wisp/"
+    },
+    {
+        group: "TungTung",
+        url: "wss://tungtung.best/wisp/"
+    },
+    {
+        group: "TungTung",
+        url: "wss://triplet.bumon.ar/wisp/"
+    },
+    {
+        group: "TungTung",
+        url: "wss://tungtung.kkmsilvia.com/wisp/"
+    },
+    {
+        group: "TungTung",
+        url: "wss://tungtung.asirargentina.com.ar/wisp/"
+    },
+    {
+        group: "Study Hub",
+        url: "wss://studyhub.hadtea.com/wisp/"
+    },
+    {
+        group: "Study Hub",
+        url: "wss://studyhub.colegioitalocomposto.cl/wisp/"
+    },
+    {
+        group: "Study Hub",
+        url: "wss://studyhub.kkmsilvia.com/wisp/"
+    },
+    {
+        group: "Study Hub",
+        url: "wss://studyhub.asirargentina.com.ar/wisp/"
+    },
+    {
+        group: "Lunar",
+        url: "wss://lunaron.top/w/"
+    },
+    {
+        group: "Lunar",
+        url: "wss://lunar.colegioitalocomposto.cl/w/"
+    },
+    {
+        group: "Lunar",
+        url: "wss://lunar.kkmsilvia.com/w/"
+    },
+    {
+        group: "Lunar",
+        url: "wss://lunar.asirargentina.com.ar/w/"
+    },
+    {
+        group: "Lunar",
+        url: "wss://lunar.globalscholarpress.com/w/"
+    }
+    
+];
+
+
+
+
+const TOMP_WISP = "wss://bare-server.fly.dev/wisp/";
+
+function isYouTubeUrl(url) {
+    try {
+        const hostname = new URL(url).hostname.toLowerCase();
+
+        return (
+            hostname === "youtube.com" ||
+            hostname.endsWith(".youtube.com") ||
+            hostname === "youtu.be"
+        );
+    } catch {
+        return false;
+    }
+}
+
+async function switchToTompForYouTube() {
+    const autoswitch = localStorage.getItem("wispAutoswitch") !== "false";
+
+    if (!autoswitch) return false;
+
+    const currentUrl = localStorage.getItem("proxServer") || DEFAULT_WISP;
+
+    if (currentUrl === TOMP_WISP) return false;
+
+    console.log("Switching to TOMP Bare Server (youtube)...");
+
+    try {
+        navigator.serviceWorker.controller?.postMessage({
+            type: "youtubeTomp",
+            enabled: true
+        });
+
+        await switchWispConnection(TOMP_WISP);
+
+        localStorage.setItem("proxServer", TOMP_WISP);
+
+        if (typeof trackWispServer === "function") {
+            trackWispServer(TOMP_WISP);
+        }
+
+        notify(
+            "info",
+            "Auto-switched",
+            "Using TOMP Bare Server for YouTube"
+        );
+
+        return true;
+    } catch (error) {
+        console.error("Failed to switch to TOMP:", error);
+
+        navigator.serviceWorker.controller?.postMessage({
+            type: "youtubeTomp",
+            enabled: false
+        });
+
+        return false;
+    }
+}
+
+
+const URL_PARAMS = new URLSearchParams(window.location.search);
+
+const STARTUP_URL = URL_PARAMS.get("url");
+const PARAM_WISP = URL_PARAMS.get("wisp");
+const FULLSCREEN_MODE = URL_PARAMS.get("fullscreen") === "true";
+
+let startupWisp = PARAM_WISP || null;
+
+
+
+
+
+
+
+
+
+
+// Helper to get servers grouped
+function getGroupedWispServers() {
+    return getAllWispServers().reduce((groups, server) => {
+        (groups[server.group] ??= []).push(server);
+        return groups;
+    }, {});
+}
+
+
+
+
+
+// Initialize default proxy server if not set
+if (!localStorage.getItem("proxServer")) {
+    localStorage.setItem("proxServer", DEFAULT_WISP);
+}
+
+// Helper to get all servers (config + custom)
+function getAllWispServers() {
+    const customWisps = getStoredWisps();
+    return [...WISP_SERVERS, ...customWisps];
+}
+
+// =====================================================
+// PROACTIVE SERVER HEALTH CHECKING
+// =====================================================
+
+// Ping a wisp server to check if it's responsive
+async function pingWispServer(url, timeout = 2000) {
+    return new Promise((resolve) => {
+        const start = Date.now();
+        try {
+            const ws = new WebSocket(url);
+            const timer = setTimeout(() => {
+                try { ws.close(); } catch {}
+                resolve({ url, success: false, latency: null });
+            }, timeout);
+
+            ws.onopen = () => {
+                clearTimeout(timer);
+                const latency = Date.now() - start;
+                try { ws.close(); } catch {}
+                resolve({ url, success: true, latency });
+            };
+
+            ws.onerror = () => {
+                clearTimeout(timer);
+                try { ws.close(); } catch {}
+                resolve({ url, success: false, latency: null });
+            };
+        } catch {
+            resolve({ url, success: false, latency: null });
+        }
+    });
+}
+
+// Find the best (fastest working) server from the list
+async function findBestWispServer(servers, currentUrl) {
+    if (!servers || servers.length === 0) return currentUrl;
+
+    const currentServer = servers.find(s => s.url === currentUrl);
+    const currentGroup = currentServer?.group;
+
+    const groups = [];
+
+    if (currentGroup) {
+        groups.push(currentGroup);
+    }
+
+    if (!groups.includes("PGIS Wisp")) {
+        groups.push("PGIS Wisp");
+    }
+
+    if (!groups.includes("Other")) {
+        groups.push("Other");
+    }
+
+    for (const group of groups) {
+        const groupServers = servers.filter(s => s.group === group);
+
+        if (groupServers.length === 0) continue;
+
+        console.log(
+            `Checking ${groupServers.length} servers in group "${group}"...`
+        );
+
+        const results = await Promise.all(
+            groupServers.map(s => pingWispServer(s.url, 2000))
+        );
+
+        const working = results
+            .filter(r => r.success)
+            .sort((a, b) => a.latency - b.latency);
+
+        if (working.length > 0) {
+            console.log(
+                `Best server in "${group}":`,
+                working[0].url,
+                working[0].latency + "ms"
+            );
+
+            return working[0].url;
+        }
+
+        console.log(`No working servers found in "${group}".`);
+    }
+
+    return currentUrl || servers[0]?.url;
+}
+
+// Proactively check and switch to best server on init
+async function initializeWithBestServer() {
+    const autoswitch = localStorage.getItem('wispAutoswitch') !== 'false';
+    const allServers = getAllWispServers();
+
+    if (!autoswitch || allServers.length <= 1) {
+        return;
+    }
+
+    const currentUrl = localStorage.getItem("proxServer") || DEFAULT_WISP;
+    
+    // Check if current server is working, if not find a better one
+    const currentCheck = await pingWispServer(currentUrl, 2000);
+    
+    if (currentCheck.success) {
+        console.log("Init: Current server is working:", currentUrl, currentCheck.latency + "ms");
+        return;
+    }
+
+    // Current server is bad, find the fastest working server
+    console.log("Init: Current server not responding, finding better server...");
+    const best = await findBestWispServer(allServers, currentUrl);
+    
+    if (best && best !== currentUrl) {
+    console.log("Init: Auto-switching to faster server:", best);
+    localStorage.setItem("proxServer", best);
+
+    if (typeof trackWispServer === "function") {
+        trackWispServer(best);
+    }
+
+    const serverName = allServers.find(s => s.url === best)?.name || 'Faster Server';
+    notify('info', 'Auto-switched', `Using ${serverName} for best performance`);
+    }
+}
+
+// =====================================================
+// BROWSER STATE
+// =====================================================
+const BareMux = window.BareMux ?? { BareMuxConnection: class { setTransport() {} } };
+
+// SINGLETON: Shared resources for all tabs (prevents connection exhaustion)
+let sharedScramjet = null;
+let sharedConnection = null;
+let sharedConnectionReady = false;
+
+let tabs = [];
+let activeTabId = null;
+let nextTabId = 1;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function runInActiveFrame(code) {
+    const tab = getActiveTab();
+    const frame = tab?.frame?.frame;
+
+    if (!frame) return false;
+
+    try {
+        const win = frame.contentWindow;
+        const doc = frame.contentDocument;
+
+        if (!win || !doc) return false;
+
+        const script = doc.createElement("script");
+        script.textContent = `(function(){ try { ${code} } catch(e){ console.error(e); } })();`;
+        doc.documentElement.appendChild(script);
+        script.remove();
+
+        return true;
+    } catch (e) {
+        console.warn("Injection failed:", e);
+        return false;
+    }
+}
+
+function parseBookmarklet(input) {
+    if (!input) return null;
+    if (input.startsWith("javascript:")) {
+        return input.slice("javascript:".length);
+    }
+    return null;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// =====================================================
+// UTILITIES
+// =====================================================
+const getBasePath = () => {
+    const basePath = location.pathname.replace(/[^/]*$/, '');
+    return basePath.endsWith('/') ? basePath : basePath + '/';
+};
+
+const getStoredWisps = () => {
+    try { return JSON.parse(localStorage.getItem('customWisps') ?? '[]'); }
+    catch { return []; }
+};
+
+const getActiveTab = () => tabs.find(t => t.id === activeTabId);
+
+const notify = (type, title, message) => {
+    if (typeof Notify !== 'undefined') {
+        Notify[type](title, message);
+    }
+};
+
+
+
+
+function isBookmarklet(input) {
+    return input?.trim().startsWith("javascript:");
+}
+
+
+
+
+
+async function getExtension(extensionId) {
+    const db = await openDB();
+
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction("extensions", "readonly");
+        const request = tx.objectStore("extensions").get(extensionId);
+
+        request.onsuccess = () => {
+            resolve(request.result || null);
+        };
+
+        request.onerror = () => {
+            resolve(null);
+        };
+    });
+}
+
+
+async function getExtensionFile(extensionId, filename) {
+
+    const extension = await getExtension(extensionId);
+
+    if (!extension) {
+        console.error("Extension not found:", extensionId);
+        return null;
+    }
+
+    const file = extension.files[filename];
+
+    if (!file) {
+        console.error("File not found:", filename);
+        return null;
+    }
+
+    return file.data;
+}
+
+
+
+
+
+
+async function openExtensionUrl(url) {
+
+    console.log("Opening:", url);
+
+    const tab = getActiveTab();
+
+    tab.url = url;
+    updateAddressBar();
+    
+    const path = url.slice("extension://".length);
+    const parts = path.split("/");
+
+    const extensionId = parts.shift();
+    const file = parts.join("/") || "popup.html";
+
+    console.log("ID:", extensionId);
+    console.log("File:", file);
+
+    const html = await buildExtensionPage(extensionId, file);
+
+    console.log("HTML:", html);
+
+    if (!html) {
+        notify("error", "Extension", "Page not found");
+        return;
+    }
+
+    const blob = new Blob([html], {
+        type: "text/html"
+    });
+
+    const blobUrl = URL.createObjectURL(blob);
+
+    console.log("Blob:", blobUrl);
+
+    tab.frame.frame.src = blobUrl;
+}
+
+
+
+
+
+
+
+
+
+const CLOSE_PROTECTION_EXTENSIONS = {
+    "Securly (5th ID)": "chrome-extension://kfiocjonplkilcjfgabfngiddebalkod/fonts/Metropolis.css",
+    "Securly (4th ID)": "chrome-extension://lcgajdcbmhepmlpemkkpgagieehmjp/fonts/Metropolis.css",
+    "Securly (3rd ID)": "chrome-extension://ckecmkbnoanpgplccmnoikfmpcdladkc/fonts/Metropolis.css",
+    "Securly (2nd ID)": "chrome-extension://joflmkccibkooplaeoinecjbmdebglab/fonts/Metropolis.css",
+    "Securly (1st ID)": "chrome-extension://iheobagjkfklnlikgihanlhcddjoihkg/fonts/Metropolis.css",
+    "GoGuardian": "chrome-extension://haldlgldplgnggkjaafhelgiaglafanh/icons/enabled-dark-128.png",
+    "LANSchool": "chrome-extension://baleiojnjpgeojohhhfbichcodgljmnj/blocked.html",
+    "Linewize": "chrome-extension://ddfbkhpmcdbciejenfcolaaiebnjcbfc/background/assets/pages/default-blocked.html",
+    "Blocksi": "chrome-extension://ghlpmldmjjhmdgmneoaibbegkjjbonbk/images/icons/yt-denied.png",
+    "FortiGuard": "chrome-extension://igbgpehnbmhgdgjbhkkpedommgmfbeao/youtube_injection.js",
+    "Cisco Security (2nd ID)": "chrome-extension://jgnjaoilojahgagddnkeankieagghabk/_locales/ja/messages.json",
+    "Cisco Umbrella (1st ID)": "chrome-extension://jcdhmojfecjfmbdpchihbeilohgnbdci/blocked.html",
+    "ContentKeeper": "chrome-extension://jdogphakondfdmcanpapfahkdomaicfa/img/ckauth19x.png",
+    "CK-Authenticator G3": "chrome-extension://odoanpnonilogofggaohhkdkdgbhdljp/img/ckauth19x.png",
+    "Securly Classroom (2nd ID)": "chrome-extension://hkobaiihndnbfhbkmjjfbdimfbdcppdh/notfound.html",
+    "Securly Classroom (1st ID)": "chrome-extension://jfbecfmiegcjddenjhlbhlikcbfmnafd/notfound.html",
+    "Hapara (3rd ID)": "chrome-extension://hpamladjhjimikgajbgjmcopoejbpnfp/blocked.html",
+    "Hapara (2nd ID)": "chrome-extension://kbohafcopfpigkjdimdcdgenlhkmhbnc/blocked.html",
+    "Hapara (1st ID)": "chrome-extension://aceopacgaepdcelohobicpffbbejnfac/blocked.html",
+    "iboss": "chrome-extension://kmffehbidlalibfeklaefnckpidbodff/restricted.html",
+    "Lightspeed Digital Insight Agent": "chrome-extension://njdniclgegijdcdliklgieicanpmcngj/js/speed_test.js",
+    "Lightspeed Filter Agent (2nd ID)": "chrome-extension://ehnniokiiebpinnfegpkdlcamgdcaaje/blocked.png",
+    "Lightspeed Filter Agent (1st ID)": "chrome-extension://adkcpkpghahmbopkjchobieckeoaoeem/blocked-image-search.png",
+    "Lightspeed Classroom": "chrome-extension://kkbmdgjggcdajckdlbngdjonpchpaiea/assets/icon-classroom-128.png",
+    "InterCLASS Filtering Service": "chrome-extension://jbddgjglgkkneonnineaohdhabjbgopi/pages/message-page.html",
+    "InterSafe GatewayConnection Agent": "chrome-extension://ecjoghccnjlodjlmkgmnbnkdcbnjgden/resources/options.js",
+    "LoiLo Web Filters": "chrome-extension://pabjlbjcgldndnpjnokjakbdofjgnfia/image/allow_icon/shield_green_128x128.png",
+    "Gopher Buddy": "chrome-extension://cgbbbjmgdpnifijconhamggjehlamcif/images/gopher-buddy_128x128_color.png",
+    "LanSchool Web Helper": "chrome-extension://honjcnefekfnompampcpmcdadibmjhlk/blocked.html",
+    "IMTLazarus": "chrome-extension://cgigopjakkeclhggchgnhmpmhghcbnaf/models/model.json",
+    "Impero Backdrop": "chrome-extension://jjpmjccpemllnmgiaojaocgnakpmfgjg/licenses.html",
+    "Mobile Guardian": "chrome-extension://fgmafhdohjkdhfaacgbgclmfgkgokgmb/block.html",
+    "NetSupport School Student": "chrome-extension://gcjpefhffmcgplgklffgbebganmhffje/_locales/lt/messages.json",
+    "classroom.cloud Student": "chrome-extension://mpkdoimpgkhjcicmhmlmgboelebflpla/_locales/lt/messages.json",
+    "Lockdown Browser": "chrome-extension://fogjeanjfbiombghnmkmmophfeccjdki/manifest.json",
+    "Linewize Filter": "chrome-extension://ifinpabiejbjobcphhaomiifjibpkjlf/chat/assets/imgs/pendo.png",
+    "Borderless Classroom Student (2nd ID)": "chrome-extension://apchgbgnimojffnkddiigiekiooeieno/pages/blockPage.html",
+    "Borderless Classroom Student (1st ID)": "chrome-extension://kdpgkligilplaanoablcpjahjjeghcl/pages/blockPage.html",
+    "LockDown Browser AP Classroom Edition": "chrome-extension://djpknfecbncogekjnjppojlaipeobkmo/assets/images/icon_128.png",
+    "Lugus School": "chrome-extension://eoobggamkobbcpiojefejfglbfcacgca/assets/images/icon_128.png",
+    "no-direct-ip": "chrome-extension://hacaeeoapmdgmhifjcgbblcobgnmceff/icons/block.png"
+};
+
+async function checkCloseProtectionExtension(url) {
+    try {
+        const response = await fetch(url);
+
+        if (response.ok) {
+            return true;
+        }
+    } catch {}
+
+    try {
+        const response = await fetch(url, {
+            method: "HEAD"
+        });
+
+        if (response.ok) {
+            return true;
+        }
+    } catch {}
+
+    return false;
+}
+
+async function detectCloseProtectionExtension() {
+    const results = await Promise.all(
+        Object.values(CLOSE_PROTECTION_EXTENSIONS).map(
+            checkCloseProtectionExtension
+        )
+    );
+
+    return results.some(Boolean);
+}
+
+async function shouldUseCloseProtection() {
+    const mode = localStorage.getItem("closeProtection") || "automatic";
+
+    if (mode === "enabled") {
+        return true;
+    }
+
+    if (mode === "disabled") {
+        return false;
+    }
+
+    return await detectCloseProtectionExtension();
+}
+
+async function initializeCloseProtection() {
+    const enabled = await shouldUseCloseProtection();
+
+    if (!enabled) {
+        return;
+    }
+
+    window.addEventListener("beforeunload", (event) => {
+        event.preventDefault();
+        event.returnValue = "";
+    });
+}
+
+
+
+function updateToolbarVisibility() {
+    const toolbar = document.getElementById("toolbar");
+    const bookmarkToolbar = document.getElementById("bookmark-toolbar");
+    const extensionToolbar = document.getElementById("extension-toolbar");
+
+    if (!toolbar || !bookmarkToolbar || !extensionToolbar) return;
+
+    const hasBookmarks = bookmarkToolbar.children.length > 0;
+    const hasExtensions = extensionToolbar.children.length > 0;
+
+    toolbar.style.display = hasBookmarks || hasExtensions ? "" : "none";
+}
+
+
+
+
+
+
+//bookmarks
+
+
+
+
+function getBookmarks() {
+    try {
+        return JSON.parse(localStorage.getItem("bookmarks") || "[]");
+    } catch {
+        return [];
+    }
+}
+
+function saveBookmarks(bookmarks) {
+    localStorage.setItem("bookmarks", JSON.stringify(bookmarks));
+}
+
+function addBookmark(title, url) {
+    const bookmarks = getBookmarks();
+
+    if (bookmarks.some(b => b.url === url)) {
+        notify("warning", "Bookmark exists", "This page is already bookmarked");
+        return;
+    }
+
+    bookmarks.push({
+        title,
+        url
+    });
+
+    saveBookmarks(bookmarks);
+    renderBookmarks();
+}
+
+function removeBookmark(url) {
+    const bookmarks = getBookmarks().filter(b => b.url !== url);
+    saveBookmarks(bookmarks);
+    renderBookmarks();
+}
+
+
+
+function renderBookmarks() {
+    const toolbar = document.getElementById("bookmark-toolbar");
+    if (!toolbar) return;
+
+    toolbar.innerHTML = "";
+
+    const bookmarks = getBookmarks();
+
+    bookmarks.forEach(bookmark => {
+        const button = document.createElement("button");
+        button.className = "bookmark-button";
+        button.title = bookmark.url;
+
+        let hostname = "";
+
+        try {
+            hostname = new URL(bookmark.url).hostname;
+        } catch {}
+
+        if (hostname) {
+            const img = document.createElement("img");
+
+            img.src = `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
+            img.className = "bookmark-favicon";
+            img.width = 16;
+            img.height = 16;
+            img.alt = "";
+
+            img.onerror = () => {
+                img.remove();
+            };
+
+            button.appendChild(img);
+        }
+
+        const text = document.createElement("span");
+        text.textContent = bookmark.title;
+
+        button.appendChild(text);
+
+        button.onclick = () => {
+            handleSubmit(bookmark.url);
+        };
+
+        button.oncontextmenu = (e) => {
+            e.preventDefault();
+
+            if (confirm(`Remove ${bookmark.title}?`)) {
+                removeBookmark(bookmark.url);
+            }
+        };
+
+        toolbar.appendChild(button);
+    });
+
+        updateToolbarVisibility();
+}
+
+
+
+
+
+
+
+
+
+
+
+// =====================================================
+// INITIALIZATION
+// =====================================================
+async function getSharedScramjet() {
+    if (sharedScramjet) return sharedScramjet;
+
+    const basePath = getBasePath();
+    const { ScramjetController } = $scramjetLoadController();
+    
+    sharedScramjet = new ScramjetController({
+        prefix: basePath + "scramjet/",
+        files: {
+            wasm: "https://cdn.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.wasm.wasm",
+            all: "https://cdn.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.all.js",
+            sync: "https://cdn.jsdelivr.net/gh/Destroyed12121/Staticsj@main/JS/scramjet.sync.js"
+        }
+    });
+    
+    try {
+        await sharedScramjet.init();
+    } catch (err) {
+        // Handle IndexedDB schema errors by clearing cache and retrying
+        if (err.message && err.message.includes('IDBDatabase') || err.message && err.message.includes('object stores')) {
+            console.warn('Scramjet IndexedDB error, clearing cache and retrying...');
+            
+            // Clear IndexedDB for Scramjet
+            try {
+                const dbNames = ['scramjet-data', 'scrambase', 'ScramjetData'];
+                for (const dbName of dbNames) {
+                    const req = indexedDB.deleteDatabase(dbName);
+                    req.onsuccess = () => console.log(`Cleared IndexedDB: ${dbName}`);
+                    req.onerror = () => console.warn(`Failed to clear IndexedDB: ${dbName}`);
+                }
+            } catch (clearErr) {
+                console.warn('Failed to clear IndexedDB:', clearErr);
+            }
+            
+            // Reset shared instance and retry
+            sharedScramjet = null;
+            return getSharedScramjet();
+        }
+        throw err;
+    }
+    
+    return sharedScramjet;
+}
+
+async function getSharedConnection() {
+    if (sharedConnectionReady) return sharedConnection;
+
+    const basePath = getBasePath();
+    const wispUrl = localStorage.getItem("proxServer") ?? DEFAULT_WISP;
+    const transport = localStorage.getItem("proxyTransport") ?? "epoxy";
+
+    const transportUrls = {
+        epoxy: "https://cdn.jsdelivr.net/npm/@mercuryworkshop/epoxy-transport@2.1.28/dist/index.mjs",
+        libcurl: "https://cdn.jsdelivr.net/npm/@mercuryworkshop/libcurl-transport@1/dist/index.mjs"
+    };
+
+    const transportUrl = transportUrls[transport] ?? transportUrls.epoxy;
+
+    sharedConnection = new BareMux.BareMuxConnection(
+        basePath + "bareworker.js"
+    );
+
+    await sharedConnection.setTransport(
+        transportUrl,
+        [{ wisp: wispUrl }]
+    );
+
+    sharedConnectionReady = true;
+    return sharedConnection;
+}
+
+
+async function switchWispConnection(url) {
+    const basePath = getBasePath();
+    const transport = localStorage.getItem("proxyTransport") ?? "epoxy";
+
+    const transportUrls = {
+        epoxy: "https://cdn.jsdelivr.net/npm/@mercuryworkshop/epoxy-transport@2.1.28/dist/index.mjs",
+        libcurl: "https://cdn.jsdelivr.net/npm/@mercuryworkshop/libcurl-transport@1/dist/index.mjs"
+    };
+
+    const transportUrl = transportUrls[transport] ?? transportUrls.epoxy;
+
+    if (!sharedConnection) {
+        await getSharedConnection();
+        return;
+    }
+
+    await sharedConnection.setTransport(
+        transportUrl,
+        [{ wisp: url }]
+    );
+}
+
+
+function openAboutBlank() {
+    const tab = getActiveTab();
+    const frame = tab?.frame?.frame;
+
+    if (!tab || !frame) return;
+
+    const tabUrl = tab.url || "";
+
+    let targetUrl = window.location.origin + window.location.pathname;
+
+    const isNormalProxiedUrl =
+        /^https?:\/\//i.test(tabUrl) &&
+        !tabUrl.includes("/internal/") &&
+        !tabUrl.includes("NT.html") &&
+        !tabUrl.startsWith("view-source:") &&
+        !tabUrl.startsWith("zinc://") &&
+        !tabUrl.startsWith("extension://");
+
+    if (isNormalProxiedUrl) {
+        let proxiedUrl = "";
+
+        try {
+            proxiedUrl = frame.contentWindow.location.href;
+        } catch {
+            proxiedUrl = "";
+        }
+
+        if (proxiedUrl.includes("/scramjet/")) {
+            proxiedUrl = proxiedUrl.split("/scramjet/")[1];
+
+            for (let i = 0; i < 5; i++) {
+                const decoded = decodeURIComponent(proxiedUrl);
+
+                if (decoded === proxiedUrl) break;
+
+                proxiedUrl = decoded;
+            }
+        }
+
+        if (/^https?:\/\//i.test(proxiedUrl)) {
+            targetUrl +=
+                "?url=" +
+                encodeURIComponent(proxiedUrl) +
+                "&fullscreen=true";
+        }
+    }
+
+    const win = window.open("about:blank", "_blank");
+
+    if (!win) {
+        notify("error", "Popup blocked", "Allow popups for Zinc to open this page.");
+        return;
+    }
+
+    win.document.write(`
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Zinc</title>
+<style>
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+iframe {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+</style>
+</head>
+<body>
+<iframe src="${targetUrl.replace(/"/g, "&quot;")}"></iframe>
+</body>
+</html>
+    `);
+
+    win.document.close();
+}
+
+
+
+
+
+
+
+function generateCurrentPageQR() {
+    const currentUrl = getActiveTab()?.url;
+
+    if (!currentUrl) return;
+
+    let parsed;
+
+    try {
+        parsed = new URL(currentUrl);
+    } catch {
+        return;
+    }
+
+    if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+        return;
+    }
+
+    const qrUrl =
+        window.location.origin +
+        "/?url=" +
+        encodeURIComponent(parsed.href) +
+        "&fullscreen=true";
+
+    const qrPreview = document.getElementById("qr-preview");
+    const qrContainer = document.getElementById("qr");
+
+    qrContainer.style.display = "block";
+    qrPreview.innerHTML = "";
+
+    new QRCode(qrPreview, {
+        text: qrUrl,
+        width: 300,
+        height: 300,
+        correctLevel: QRCode.CorrectLevel.M
+    });
+
+    document.getElementById("qr-download").onclick = () => {
+        const canvas = qrPreview.querySelector("canvas");
+
+        if (!canvas) return;
+
+        const link = document.createElement("a");
+        link.download = "zinc-qr.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+    };
+}
+
+
+
+
+
+async function initializeBrowser() {
+    const root = document.getElementById("app");
+    root.innerHTML = `
+        <div class="browser-container">
+            <div class="flex tabs" id="tabs-container"></div>
+            <div class="flex nav">
+                <button id="back-btn" title="Back"><i class="fa-solid fa-chevron-left"></i></button>
+                <button id="fwd-btn" title="Forward"><i class="fa-solid fa-chevron-right"></i></button>
+                <button id="reload-btn" title="Reload"><i class="fa-solid fa-rotate-right"></i></button>
+                <div class="address-wrapper">
+                    <input class="bar" id="address-bar" autocomplete="off" placeholder="Search or enter URL">
+                    <button id="bookmark-btn" title="Bookmark"><i class="fa-solid fa-star"></i></button>
+                    <button id="home-btn-nav" title="Home"><i class="fa-solid fa-house"></i></button>
+                </div>
+                
+                            
+                        
+                <button id="wisp-settings-btn" title="Proxy Settings"><i class="fa-solid fa-wifi"></i></button>
+     
+                     <div class="dropdown">
+    <button id="tools-btn" title="Tools">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+    
+
+
+
+
+    <div class="dropdown-menu" id="tools-menu">
+        <button id="devtools-btn" title="DevTools">
+            <i class="fa-solid fa-code"></i> DevTools
+        </button>
+
+        <button onclick='createTab(true); handleSubmit("zinc://settings"); document.getElementById("tools-menu").style.display = "none";' title="Settings">
+            <i class="fa-solid fa-gear"></i>Settings
+        </button>
+<hr>
+ <button onclick='createTab(true); handleSubmit("zinc://extensions"); document.getElementById("tools-menu").style.display = "none";'>
+    <i class="fa-solid fa-plus"></i> Extensions <small>zinc://extensions</small>
+</button>
+
+        <button onclick='createTab(true); handleSubmit("zinc://urls"); document.getElementById("tools-menu").style.display = "none";'>
+    <i class="fa-solid fa-link"></i> URLs <small>zinc://urls</small>
+</button>
+
+<button onclick='createTab(true); handleSubmit("zinc://about"); document.getElementById("tools-menu").style.display = "none";'>
+    <i class="fa-solid fa-info"></i> About <small>zinc://about</small>
+</button>
+<hr>
+<button onclick="document.querySelector('iframe').requestFullscreen()" title="fullscreen">
+    <i class="fa-solid fa-expand"></i> Fullscreen 
+</button>
+<button onclick="openAboutBlank()">
+    <i class="fa-solid fa-up-right-from-square"></i> Open in about:blank
+</button>
+<button onclick="viewSourceNav()">
+<i class="fa-solid fa-code"></i> View Source
+</button>
+<button onclick="event.stopPropagation(); generateCurrentPageQR()">
+<i class="fa-solid fa-barcode"></i> Generate QR
+</button>
+<hr>
+<button onclick="window.open('https://github.com/0800WebDev/zinc/', '_blank')" title="github repository">
+        <i class="fa-brands fa-github"></i> Github 
+        </button>
+        <button onclick="window.open('https://github.com/0800WebDev/zinc/issues/new', '_blank')" title="issue">
+           <i class="fa-solid fa-bug"></i> Issue 
+        </button>
+        <hr>
+        <button onclick="window.open('https://zinc-byod.vercel.app/', '_blank')" title="byod">
+        <i class="fa-solid fa-globe"></i> BYOD
+        </button>
+        <button onclick="window.open('https://ubghub.org/?site=Zinc', '_blank')" title="ubghub">
+        <i class="fa-solid fa-list"></i> UBGHub
+        </button>
+    </div>
+
+<div class="dropdown-menu" id="qr">
+<div id="qr-preview" width="100px" height="100px"></div>
+<button id="qr-download">Download</button>
+</div>
+
+</div>
+
+
+
+
+    
+</div>       
+<div id="toolbar">
+    <div id="bookmark-toolbar"></div>
+    <div id="extension-toolbar"></div>  
+</div>
+
+        
+            <div class="loading-bar-container"><div class="loading-bar" id="loading-bar"></div></div>
+            <div class="iframe-container" id="iframe-container">
+                <div id="loading" class="message-container" style="display: none;">
+                    <div class="message-content">
+                        <div class="spinner"></div>
+                        <h1 id="loading-title">Connecting</h1>
+                        <p id="loading-url">Initializing proxy...</p>
+                        <button id="skip-btn">Skip</button>
+                    </div>
+                </div>
+                <div id="error" class="message-container" style="display: none;">
+                    <div class="message-content">
+                        <h1>Connection Error</h1>
+                        <p id="error-message">An error occurred.</p>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+
+
+document.addEventListener("click", (e) => {
+    const qr = document.getElementById("qr");
+
+    if (!qr || getComputedStyle(qr).display === "none") return;
+
+    if (!qr.contains(e.target)) {
+        qr.style.display = "none";
+    }
+});
+    
+if (FULLSCREEN_MODE) {
+    document.querySelector(".browser-container").classList.add("fullscreen-browser");
+}
+
+
+
+
+
+    
+    
+
+
+const toolsBtn = document.getElementById("tools-btn");
+const toolsMenu = document.getElementById("tools-menu");
+
+toolsBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+
+    toolsMenu.style.display =
+        toolsMenu.style.display === "block" ? "none" : "block";
+});
+
+document.addEventListener("click", (e) => {
+    if (!e.target.closest(".dropdown")) {
+        toolsMenu.style.display = "none";
+    }
+});
+
+toolsMenu.addEventListener("click", (e) => {
+    if (e.target.closest("button")) {
+        toolsMenu.style.display = "none";
+    }
+});
+
+window.addEventListener("blur", () => {
+    if (document.activeElement?.tagName === "IFRAME") {
+        toolsMenu.style.display = "none";
+    }
+});
+
+    
+
+
+
+    
+    // Cache DOM elements
+    const elements = {
+        backBtn: document.getElementById('back-btn'),
+        fwdBtn: document.getElementById('fwd-btn'),
+        reloadBtn: document.getElementById('reload-btn'),
+        addrBar: document.getElementById('address-bar'),
+        skipBtn: document.getElementById('skip-btn')
+    };
+
+    // Bind navigation events
+    elements.backBtn.onclick = () => getActiveTab()?.frame.back();
+    elements.fwdBtn.onclick = () => getActiveTab()?.frame.forward();
+    elements.reloadBtn.onclick = () => getActiveTab()?.frame.reload();
+    document.getElementById('home-btn-nav').onclick = () => window.location.href = '../index.html';
+    document.getElementById('devtools-btn').onclick = toggleDevTools;
+    document.getElementById('wisp-settings-btn').onclick = openSettings;
+    
+    document.getElementById("bookmark-btn").onclick = () => {
+    const tab = getActiveTab();
+
+    if (!tab || !tab.url) return;
+
+    addBookmark(
+        tab.title || "Untitled",
+        tab.url
+    );
+};
+
+
+    
+elements.skipBtn.onclick = skipLoading;
+
+
+    
+    // Address bar events
+    elements.addrBar.onkeyup = (e) => e.key === 'Enter' && handleSubmit();
+    elements.addrBar.onfocus = () => elements.addrBar.select();
+
+    // Handle navigation messages
+    window.addEventListener('message', (e) => {
+        if (e.data?.type === 'navigate') handleSubmit(e.data.url);
+    });
+
+    
+    const startupTab = createTab(true);
+
+if (STARTUP_URL) {
+    handleSubmit(STARTUP_URL);
+}
+
+    checkHashParameters();
+    renderBookmarks();
+    renderExtensions();
+
+
+
+
+}
+    
+
+
+
+window.addEventListener("message", async event => {
+    const data = event.data;
+
+    if (!data) return;
+
+    switch (data.type) {
+        case "zinc-execute-script": {
+            const result = runInActiveFrame(data.code);
+
+            event.source.postMessage({
+                type: "zinc-response",
+                id: data.id,
+                result
+            }, "*");
+
+            break;
+        }
+
+        case "zinc-storage-get": {
+            const key = `${data.extensionId}:${data.key}`;
+            const stored = localStorage.getItem(key);
+
+            let value = null;
+
+            try {
+                value = stored === null ? null : JSON.parse(stored);
+            } catch {
+                value = null;
+            }
+
+            event.source.postMessage({
+                type: "zinc-storage-response",
+                id: data.id,
+                value
+            }, "*");
+
+            break;
+        }
+
+        case "zinc-storage-set": {
+            const key = `${data.extensionId}:${data.key}`;
+
+            localStorage.setItem(
+                key,
+                JSON.stringify(data.value)
+            );
+
+            event.source.postMessage({
+                type: "zinc-storage-set-response",
+                id: data.id
+            }, "*");
+
+            break;
+        }
+    }
+});
+
+    
+
+
+
+
+const newTabQueue = [];
+let processingNewTabs = false;
+
+async function processNewTabQueue() {
+    if (processingNewTabs) return;
+
+    processingNewTabs = true;
+
+    while (newTabQueue.length > 0) {
+        const url = newTabQueue.shift();
+
+        if (!url) continue;
+
+        const newTab = createTab(true);
+        await handleSubmit(url);
+
+        await new Promise(resolve => setTimeout(resolve, 50));
+    }
+
+    processingNewTabs = false;
+}
+
+window.addEventListener("message", event => {
+    if (event.data?.type !== "zinc-new-tab") return;
+
+    console.log("ZINC NEW TAB REQUEST:", event.data.url);
+
+    const tab = createTab(true);
+
+    console.log("CREATED TAB:", tab.id, event.data.url);
+
+    handleSubmit(event.data.url);
+});
+
+
+
+
+function getAboutBlankBaseUrl(frame, baseUrl) {
+    if (!baseUrl || !frame) return baseUrl;
+
+    try {
+        const encoded = new URL(baseUrl);
+
+        const prefix = frame.context?.prefix;
+        const decoder =
+            frame.context?.interface?.codecDecode;
+
+        if (!prefix || !decoder) {
+            return baseUrl;
+        }
+
+        const prefixUrl = new URL(
+            prefix.href || prefix,
+            location.href
+        );
+
+        if (!encoded.href.startsWith(prefixUrl.href)) {
+            return baseUrl;
+        }
+
+        const encodedTarget = encoded.href.slice(prefixUrl.href.length);
+
+        return decoder(encodedTarget);
+    } catch {
+        return baseUrl;
+    }
+}
+
+function getAboutBlankProxyUrl(frame, url, baseUrl) {
+    if (!url || !baseUrl || !frame) return url;
+
+    try {
+        const originalBase = getAboutBlankBaseUrl(frame, baseUrl);
+        const resolved = new URL(url, originalBase);
+
+        if (
+            resolved.protocol !== "http:" &&
+            resolved.protocol !== "https:"
+        ) {
+            return resolved.href;
+        }
+
+        const prefix = frame.context?.prefix;
+
+        if (!prefix) {
+            return resolved.href;
+        }
+
+        const prefixUrl = new URL(
+            prefix.href || prefix,
+            location.href
+        );
+
+        const encoder =
+            frame.context?.interface?.codecEncode ||
+            encodeURIComponent;
+
+        return prefixUrl.href + encoder(resolved.href);
+    } catch {
+        return url;
+    }
+}
+
+function rewriteAboutBlankHTML(html, frame, baseUrl) {
+    if (!html || !baseUrl || !frame) return html;
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+
+    const attributes = [
+        ["iframe", "src"],
+        ["frame", "src"],
+        ["img", "src"],
+        ["script", "src"],
+        ["audio", "src"],
+        ["video", "src"],
+        ["source", "src"],
+        ["track", "src"],
+        ["embed", "src"],
+        ["input", "src"],
+        ["object", "data"],
+        ["link", "href"]
+    ];
+
+    for (const [selector, attribute] of attributes) {
+        doc.querySelectorAll(`${selector}[${attribute}]`).forEach(element => {
+            const value = element.getAttribute(attribute);
+
+            if (!value) return;
+
+            const trimmed = value.trim();
+
+            if (
+                !trimmed ||
+                trimmed.startsWith("#") ||
+                trimmed.startsWith("data:") ||
+                trimmed.startsWith("blob:") ||
+                trimmed.startsWith("javascript:") ||
+                trimmed.startsWith("mailto:") ||
+                trimmed.startsWith("tel:") ||
+                trimmed.startsWith("about:")
+            ) {
+                return;
+            }
+
+            element.setAttribute(
+                attribute,
+                getAboutBlankProxyUrl(
+                    frame,
+                    trimmed,
+                    baseUrl
+                )
+            );
+        });
+    }
+
+    doc.querySelectorAll("[srcset]").forEach(element => {
+        const srcset = element.getAttribute("srcset");
+
+        if (!srcset) return;
+
+        const rewritten = srcset
+            .split(",")
+            .map(part => {
+                const pieces = part.trim().split(/\s+/);
+
+                if (!pieces[0]) return part;
+
+                const url = pieces.shift();
+
+                const trimmed = url.trim();
+
+                if (
+                    !trimmed ||
+                    trimmed.startsWith("data:") ||
+                    trimmed.startsWith("blob:") ||
+                    trimmed.startsWith("javascript:")
+                ) {
+                    return part;
+                }
+
+                const proxied = getAboutBlankProxyUrl(
+                    frame,
+                    trimmed,
+                    baseUrl
+                );
+
+                return [proxied, ...pieces].join(" ");
+            })
+            .join(", ");
+
+        element.setAttribute("srcset", rewritten);
+    });
+
+    return "<!DOCTYPE html>" + doc.documentElement.outerHTML;
+}
+
+
+
+    
+    
+
+window.addEventListener("message", event => {
+    const data = event.data;
+
+    if (!data) return;
+
+    if (data.type === "zinc-about-blank") {
+        const tab = createTab(true);
+
+        tab.url = "about:blank";
+        tab.title = "about:blank";
+        tab.favicon = null;
+        tab.loading = false;
+        tab.aboutBlankBase = data.baseUrl || "";
+
+        const frame = tab.frame.frame;
+
+        frame.srcdoc = `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>about:blank</title>
+</head>
+<body></body>
+</html>`;
+
+        window.__aboutBlankTabs ??= {};
+        window.__aboutBlankTabs[data.id] = tab;
+
+        updateAddressBar();
+        updateTabsUI();
+    }
+
+    if (data.type === "zinc-about-blank-write") {
+        const tab = window.__aboutBlankTabs?.[data.id];
+
+        if (!tab?.frame?.frame) return;
+
+        const frame = tab.frame.frame;
+        const baseUrl = tab.aboutBlankBase || "";
+        let html = data.html || "";
+
+        if (baseUrl) {
+            html = rewriteAboutBlankHTML(
+                html,
+                frame,
+                baseUrl
+            );
+        }
+
+        frame.srcdoc = html;
+
+        tab.loading = false;
+        tab.url = "about:blank";
+
+        updateAddressBar();
+        updateTabsUI();
+    }
+});
+
+
+async function viewSourceNav() {
+    console.log("[viewSourceNav] Called");
+
+    const url = getActiveTab()?.url;
+    console.log("[viewSourceNav] Active tab URL:", url);
+
+    if (!url) {
+        console.log("[viewSourceNav] No URL found");
+        return;
+    }
+
+    try {
+        const parsed = new URL(url);
+        console.log("[viewSourceNav] Parsed URL:", parsed.href);
+        console.log("[viewSourceNav] Protocol:", parsed.protocol);
+
+        if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+            const viewSourceUrl = "view-source:" + url;
+
+            console.log("[viewSourceNav] Valid HTTP(S) URL");
+            console.log("[viewSourceNav] Navigating to:", viewSourceUrl);
+
+         createTab(true); handleSubmit(viewSourceUrl);
+        } else {
+            console.log("[viewSourceNav] Invalid protocol:", parsed.protocol);
+        }
+    } catch (error) {
+        console.error("[viewSourceNav] Failed to parse URL:", url, error);
+    }
+}
+
+
+function skipLoading() {
+    const tab = getActiveTab();
+
+    if (!tab) return;
+
+    tab.loading = false;
+    showIframeLoading(false);
+}
+
+// =====================================================
+// TAB MANAGEMENT
+// =====================================================
+
+
+
+function openDataUrl(input) {
+    const tab = getActiveTab();
+    if (!tab) return;
+
+    try {
+        const match = input.match(/^data:([^,]*),(.*)$/s);
+
+        if (!match) {
+            notify("error", "Invalid data URL", "Could not parse the data URL");
+            return;
+        }
+
+        const metadata = match[1];
+        const data = match[2];
+
+        const parts = metadata.split(";");
+        let mimeType = parts.shift() || "text/plain";
+
+        const isBase64 = parts.includes("base64");
+
+        let content;
+
+        if (isBase64) {
+            const binary = atob(data);
+            const bytes = new Uint8Array(binary.length);
+
+            for (let i = 0; i < binary.length; i++) {
+                bytes[i] = binary.charCodeAt(i);
+            }
+
+            content = new Blob([bytes], {
+                type: mimeType
+            });
+        } else {
+            content = new Blob(
+                [decodeURIComponent(data)],
+                { type: mimeType }
+            );
+        }
+
+        const blobUrl = URL.createObjectURL(content);
+
+        tab.url = input;
+        tab.title = "Data URL";
+        tab.favicon = null;
+        tab.loading = true;
+
+        updateAddressBar();
+        updateTabsUI();
+        showIframeLoading(true, input);
+
+        tab.frame.frame.src = blobUrl;
+
+        tab.frame.frame.addEventListener("load", () => {
+            tab.loading = false;
+            showIframeLoading(false);
+            updateTabsUI();
+
+            setTimeout(() => {
+                URL.revokeObjectURL(blobUrl);
+            }, 60000);
+        }, { once: true });
+
+    } catch (error) {
+        console.error("Data URL failed:", error);
+
+        notify(
+            "error",
+            "Data URL",
+            "Could not open the data URL"
+        );
+    }
+}
+
+
+
+
+
+function openBlankPage(tab) {
+    if (!tab?.frame?.frame) return;
+
+    tab.url = "about:blank";
+    tab.title = "about:blank";
+    tab.favicon = null;
+    tab.loading = false;
+
+    const frame = tab.frame.frame;
+
+    frame.srcdoc = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+</head>
+<body></body>
+</html>`;
+
+    updateAddressBar();
+    updateTabsUI();
+    showIframeLoading(false);
+}
+
+
+function setupNewTabInterception(tab) {
+    const frame = tab?.frame?.frame;
+    if (!frame) return;
+
+    try {
+        const win = frame.contentWindow;
+        const doc = frame.contentDocument;
+
+        if (!win || !doc) return;
+
+        const script = doc.createElement("script");
+
+        script.textContent = `
+            (() => {
+                const zincOpen = (url) => {
+                    if (!url || String(url).toLowerCase() === "about:blank") {
+                        const id = crypto.randomUUID();
+
+                        window.parent.postMessage({
+                            type: "zinc-about-blank",
+                            id,
+                           baseUrl: document.baseURI || location.href
+                        }, "*");
+
+                        let html = "";
+
+                        return {
+                            document: {
+                                open() {
+                                    html = "";
+                                },
+
+                                write(content) {
+                                    html += String(content);
+
+                                    window.parent.postMessage({
+                                        type: "zinc-about-blank-write",
+                                        id,
+                                        html
+                                    }, "*");
+                                },
+
+                                writeln(content) {
+                                    html += String(content) + "\\n";
+
+                                    window.parent.postMessage({
+                                        type: "zinc-about-blank-write",
+                                        id,
+                                        html
+                                    }, "*");
+                                },
+
+                                close() {
+                                    window.parent.postMessage({
+                                        type: "zinc-about-blank-write",
+                                        id,
+                                        html
+                                    }, "*");
+                                }
+                            },
+
+                            location: {
+                                href: "about:blank"
+                            }
+                        };
+                    }
+
+                    try {
+                        url = new URL(url, location.href).href;
+                    } catch {}
+
+                    window.parent.postMessage({
+                        type: "zinc-new-tab",
+                        url
+                    }, "*");
+
+                    return null;
+                };
+
+                window.open = zincOpen;
+
+                document.addEventListener("click", function(e) {
+                    const link = e.target.closest("a");
+
+                    if (!link) return;
+
+                    if (
+                        link.target === "_blank" ||
+                        link.target === "_new"
+                    ) {
+                        e.preventDefault();
+                        e.stopImmediatePropagation();
+
+                        zincOpen(link.href);
+                    }
+                }, true);
+
+                document.addEventListener("submit", function(e) {
+                    const form = e.target;
+
+                    if (
+                        form.target !== "_blank" &&
+                        form.target !== "_new"
+                    ) {
+                        return;
+                    }
+
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+
+                    const formData = new FormData(form);
+                    const method = (form.method || "get").toLowerCase();
+
+                    let url = form.action || location.href;
+
+                    if (method === "get") {
+                        const params = new URLSearchParams(formData);
+
+                        if (params.toString()) {
+                            url += (url.includes("?") ? "&" : "?") + params.toString();
+                        }
+                    }
+
+                    zincOpen(url);
+                }, true);
+            })();
+        `;
+
+        doc.documentElement.appendChild(script);
+        script.remove();
+    } catch (e) {
+        console.warn("New-tab interception failed:", e);
+    }
+}
+
+
+
+
+async function openViewSource(input) {
+    const tab = getActiveTab();
+    if (!tab) return;
+
+    let targetUrl = input.slice("view-source:".length).trim();
+
+    if (!targetUrl) return;
+
+    if (!/^https?:\/\//i.test(targetUrl)) {
+        targetUrl = `https://${targetUrl}`;
+    }
+
+    tab.url = `view-source:${targetUrl}`;
+    tab.title = "View Source";
+    tab.favicon = null;
+    tab.loading = true;
+
+    updateAddressBar();
+    updateTabsUI();
+    showIframeLoading(true, targetUrl);
+    updateLoadingBar(tab, 20);
+
+    try {
+        const response = await fetch(
+            `https://r.jina.ai/${targetUrl}`,
+            {
+                headers: {
+                    "X-Respond-With": "html",
+                    "X-Respond-Timing": "html"
+                }
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+
+        const source = await response.text();
+
+        const escaped = source
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+
+        const viewer = `
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>view-source:${targetUrl}</title>
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    background: #1e1e1e;
+    color: #d4d4d4;
+}
+
+pre {
+    margin: 0;
+    padding: 16px;
+    white-space: pre;
+    font-family: Consolas, Monaco, monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    tab-size: 4;
+}
+</style>
+</head>
+<body>
+<pre>${escaped}</pre>
+</body>
+</html>`;
+
+        const blob = new Blob([viewer], {
+            type: "text/html"
+        });
+
+        const blobUrl = URL.createObjectURL(blob);
+
+        tab.frame.frame.src = blobUrl;
+        tab.loading = false;
+
+        updateAddressBar();
+        updateTabsUI();
+        updateLoadingBar(tab, 100);
+        showIframeLoading(false);
+
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+
+    } catch (error) {
+        console.error("View source failed:", error);
+
+        tab.loading = false;
+        showIframeLoading(false);
+
+        notify(
+            "error",
+            "View Source",
+            `Could not retrieve source: ${error.message}`
+        );
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+function updateInternalUrl(tab) {
+    try {
+        const url = new URL(tab.frame.frame.contentWindow.location.href);
+        const match = url.pathname.match(/\/internal\/([^/]+)\.html$/);
+
+        if (match) {
+            tab.url = `zinc://${match[1]}`;
+            updateAddressBar();
+            updateTabsUI();
+            return true;
+        }
+    } catch {}
+
+    return false;
+}
+
+function createTab(makeActive = true) {
+    const frame = sharedScramjet.createFrame();
+const tab = {
+    id: nextTabId++,
+    title: "New Tab",
+    url: "NT.html",
+    frame,
+    loading: false,
+    favicon: null,
+    skipTimeout: null,
+    loadTimeout: null,
+    loadStartTime: null
+};
+    
+    frame.frame.src = "NT.html";
+
+  frame.addEventListener("urlchange", (e) => {
+    let displayUrl = e.url;
+
+    try {
+        const urlObj = new URL(e.url);
+        const internalMatch = urlObj.pathname.match(/\/internal\/([^/]+)\.html$/);
+
+        if (internalMatch) {
+            const pageName = internalMatch[1];
+            displayUrl = `zinc://${pageName}`;
+        }
+    } catch {}
+
+    tab.url = displayUrl;
+   tab.loading = true;
+tab.loadStartTime = Date.now();
+
+clearTimeout(tab.loadTimeout);
+
+tab.loadTimeout = setTimeout(() => {
+    if (!tab.loading || tab.id !== activeTabId) return;
+
+    showIframeError(
+        `Could not load ${tab.url}. The URL may be invalid, unreachable, or the server may be offline.`
+    );
+}, 15000);
+
+        if (tab.id === activeTabId) {
+            showIframeLoading(true, tab.url);
+        }
+
+        try {
+            const urlObj = new URL(e.url);
+            tab.title = urlObj.hostname;
+            tab.favicon = `https://www.google.com/s2/favicons?domain=${urlObj.hostname}&sz=32`;
+        } catch {
+            tab.title = "Browsing";
+            tab.favicon = null;
+        }
+        
+        updateTabsUI();
+        updateAddressBar();
+        updateLoadingBar(tab, 10);
+
+        if (tab.skipTimeout) clearTimeout(tab.skipTimeout);
+tab.skipTimeout = setTimeout(() => {
+    if (!tab.loading || tab.id !== activeTabId) return;
+
+    const skipBtn = document.getElementById("skip-btn");
+
+    if (!skipBtn) return;
+
+    skipBtn.style.display = "inline-block";
+
+    if (localStorage.getItem("autoSkip") === "true") {
+        skipLoading();
+    }
+}, 200);
+    });
+
+frame.frame.addEventListener('load', () => {
+    tab.loading = false;
+    clearTimeout(tab.skipTimeout);
+    clearTimeout(tab.loadTimeout);
+
+    hideIframeError();
+
+    setupNewTabInterception(tab);
+
+    updateInternalUrl(tab);
+
+    if (tab.id === activeTabId) {
+        showIframeLoading(false);
+    }
+
+    try {
+        const title = frame.frame.contentWindow.document.title;
+        if (title) tab.title = title;
+    } catch {}
+
+    if (frame.frame.contentWindow.location.href.includes('NT.html')) {
+        tab.title = "New Tab";
+        tab.url = "";
+        tab.favicon = null;
+    }
+
+    updateTabsUI();
+    updateAddressBar();
+    updateLoadingBar(tab, 100);
+});
+
+    tabs.push(tab);
+    document.getElementById("iframe-container").appendChild(frame.frame);
+    if (makeActive) switchTab(tab.id);
+    return tab;
+}
+
+
+
+
+
+
+function showIframeError(message) {
+    const loading = document.getElementById("loading");
+    const error = document.getElementById("error");
+    const errorMessage = document.getElementById("error-message");
+
+    if (loading) loading.style.display = "none";
+
+    if (error) {
+        errorMessage.textContent = message;
+        error.style.display = "flex";
+    }
+
+    const tab = getActiveTab();
+
+    if (tab) {
+        tab.loading = false;
+        clearTimeout(tab.skipTimeout);
+        clearTimeout(tab.loadTimeout);
+        updateTabsUI();
+    }
+}
+
+function hideIframeError() {
+    const error = document.getElementById("error");
+
+    if (error) {
+        error.style.display = "none";
+    }
+}
+
+
+
+
+function showIframeLoading(show, url = '') {
+    const loader = document.getElementById("loading");
+    if (!loader) return;
+
+    loader.style.display = show ? "flex" : "none";
+    getActiveTab()?.frame.frame.classList.toggle('loading', show);
+
+    if (show) {
+        document.getElementById("loading-title").textContent = "Connecting";
+        document.getElementById("loading-url").textContent = url || "Loading content...";
+        document.getElementById("skip-btn").style.display = 'none';
+    }
+}
+
+function switchTab(tabId) {
+    activeTabId = tabId;
+    const tab = getActiveTab();
+
+    tabs.forEach(t => t.frame.frame.classList.toggle("hidden", t.id !== tabId));
+
+    if (tab) {
+        showIframeLoading(tab.loading, tab.url);
+        
+        const skipBtn = document.getElementById('skip-btn');
+        if (tab.loading && tab.loadStartTime && skipBtn) {
+            const elapsed = Date.now() - tab.loadStartTime;
+            if (elapsed > 3000) skipBtn.style.display = 'inline-block';
+        }
+    }
+
+    updateTabsUI();
+    updateAddressBar();
+}
+
+function closeTab(tabId) {
+    const idx = tabs.findIndex(t => t.id === tabId);
+    if (idx === -1) return;
+
+    const tab = tabs[idx];
+    clearTimeout(tab.skipTimeout);
+    
+    if (tab.frame?.frame) {
+        tab.frame.frame.src = 'about:blank';
+        tab.frame.frame.remove();
+    }
+    
+    tabs.splice(idx, 1);
+
+    if (activeTabId === tabId) {
+        if (tabs.length > 0) switchTab(tabs[Math.max(0, idx - 1)].id);
+        else window.location.reload();
+    } else {
+        updateTabsUI();
+    }
+}
+
+function updateTabsUI() {
+    const container = document.getElementById("tabs-container");
+    container.innerHTML = "";
+
+    tabs.forEach(tab => {
+        const el = document.createElement("div");
+        el.className = `tab ${tab.id === activeTabId ? "active" : ""}`;
+
+        const iconHtml = tab.loading 
+            ? `<div class="tab-spinner"></div>`
+            : tab.favicon 
+                ? `<img src="${tab.favicon}" class="tab-favicon" onerror="this.style.display='none'">`
+                : '';
+
+        el.innerHTML = `${iconHtml}<span class="tab-title">${tab.title}</span><span class="tab-close">&times;</span>`;
+        el.onclick = () => switchTab(tab.id);
+        el.querySelector(".tab-close").onclick = (e) => { e.stopPropagation(); closeTab(tab.id); };
+        container.appendChild(el);
+    });
+
+    const newBtn = document.createElement("button");
+    newBtn.className = "new-tab";
+    newBtn.innerHTML = "<i class='fa-solid fa-plus'></i>";
+    newBtn.onclick = () => createTab(true);
+    container.appendChild(newBtn);
+}
+
+function updateAddressBar() {
+    const bar = document.getElementById("address-bar");
+    const tab = getActiveTab();
+    if (bar && tab) {
+        bar.value = (tab.url && !tab.url.includes("NT.html")) ? tab.url : "";
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+async function handleSubmit(url) {
+    const tab = getActiveTab();
+    let input = url ?? document.getElementById("address-bar").value.trim();
+    if (!input) return;
+
+
+    
+if (input.trim().toLowerCase().startsWith("data:")) {
+    openDataUrl(input.trim());
+    return;
+}
+
+    
+if (input.trim().toLowerCase() === "about:blank") {
+    openBlankPage(tab);
+    return;
+}
+    
+
+
+if (input.startsWith("view-source:")) {
+    await openViewSource(input);
+    return;
+}
+
+    
+if (input.startsWith("extension://")) {
+    await openExtensionUrl(input);
+    return;
+}
+
+
+if (input.startsWith("zinc://")) {
+    const target = input.slice("zinc://".length).trim();
+    if (!target) return;
+
+    const internalUrl = `internal/${target}.html`;
+
+    tab.url = input;
+
+    tab.loading = true;
+    showIframeLoading(true, input);
+    updateLoadingBar(tab, 10);
+
+    updateAddressBar();
+
+    tab.frame.frame.src = internalUrl;
+
+    return;
+}
+
+
+
+
+
+    
+    // =========================
+    // BOOKMARKLET SUPPORT
+    // =========================
+const bookmarkletCode = parseBookmarklet(input);
+
+if (bookmarkletCode) {
+    const previousUrl = tab?.url;
+
+    const ok = runInActiveFrame(bookmarkletCode);
+
+    if (!ok) {
+        notify('error', 'Bookmarklet failed', 'Could not inject into page');
+    }
+
+    if (tab && previousUrl) {
+        tab.url = previousUrl;
+        updateAddressBar();
+        updateTabsUI();
+    }
+
+    return;
+}
+    // =========================
+    // NORMAL NAVIGATION
+    // =========================
+    if (!input.startsWith('http')) {
+        input = input.includes('.') && !input.includes(' ')
+            ? `https://${input}`
+            : `https://search.brave.com/search?q=${encodeURIComponent(input)}`;
+    }
+
+tab.loading = true;
+showIframeLoading(true, input);
+updateLoadingBar(tab, 10);
+
+const youtube = isYouTubeUrl(input);
+
+if (youtube && localStorage.getItem("wispAutoswitch") !== "false") {
+    await switchToTompForYouTube();
+} else {
+    navigator.serviceWorker.controller?.postMessage({
+        type: "youtubeTomp",
+        enabled: false
+    });
+}
+
+tab.frame.go(input);
+}
+
+function updateLoadingBar(tab, percent) {
+    if (tab.id !== activeTabId) return;
+    const bar = document.getElementById("loading-bar");
+    bar.style.width = percent + "%";
+    bar.style.opacity = percent === 100 ? "0" : "1";
+    if (percent === 100) setTimeout(() => { bar.style.width = "0%"; }, 200);
+}
+
+// =====================================================
+// SETTINGS & WISP
+// =====================================================
+function openSettings() {
+    const modal = document.getElementById('wisp-settings-modal');
+    modal.classList.remove('hidden');
+
+    document.getElementById('close-wisp-modal').onclick = () => modal.classList.add('hidden');
+    document.getElementById('save-custom-wisp').onclick = saveCustomWisp;
+
+    modal.onclick = (e) => {
+        if (e.target === modal) modal.classList.add('hidden');
+    };
+
+renderServerList();
+initializeAutoswitchSetting();
+}
+
+function renderServerList() {
+    const list = document.getElementById('server-list');
+    list.innerHTML = '';
+
+    const currentUrl = localStorage.getItem('proxServer') ?? DEFAULT_WISP;
+const groups = getGroupedWispServers();
+
+for (const [groupName, servers] of Object.entries(groups)) {
+    const heading = document.createElement("h3");
+    heading.className = "wisp-group-title";
+    heading.textContent = groupName;
+    list.appendChild(heading);
+
+    servers.forEach(server => {
+        const isActive = server.url === currentUrl;
+        const isCustom = server.group === "Custom";
+
+        const item = document.createElement('div');
+        item.className = `wisp-option ${isActive ? 'active' : ''}`;
+
+        const deleteBtn = isCustom
+            ? `<button class="delete-wisp-btn" onclick="event.stopPropagation(); deleteCustomWisp('${server.url}')"><i class="fa-solid fa-trash"></i></button>`
+            : '';
+
+        item.innerHTML = `
+            ${server.name ? `
+            <div class="wisp-option-header">
+                <div class="wisp-option-name">
+                    ${server.name}
+                    ${isActive ? '<i class="fa-solid fa-check" style="margin-left:8px; font-size: 0.7em; color: var(--accent);"></i>' : ''}
+                </div>
+                <div class="server-status">
+                    <span class="ping-text">...</span>
+                    <div class="status-indicator"></div>
+                    ${deleteBtn}
+                </div>
+            </div>
+            ` : `
+            <div class="wisp-option-header">
+                <div class="wisp-option-url">${server.url}</div>
+                <div class="server-status">
+                    <span class="ping-text">...</span>
+                    <div class="status-indicator"></div>
+                    ${deleteBtn}
+                </div>
+            </div>
+            `}
+
+            ${server.name ? `
+            <div class="wisp-option-url">${server.url}</div>
+            ` : ''}
+        `;
+
+        item.onclick = () => setWisp(server.url);
+        list.appendChild(item);
+        checkServerHealth(server.url, item);
+    });
+}
+}
+function saveCustomWisp() {
+    const input = document.getElementById('custom-wisp-input');
+    let url = input.value.trim();
+
+    if (!url) return;
+
+    if (url.startsWith('https://')) {
+        url = 'wss://' + url.slice('https://'.length);
+    } else if (url.startsWith('http://')) {
+        url = 'ws://' + url.slice('http://'.length);
+    } else if (!url.startsWith('wss://') && !url.startsWith('ws://')) {
+        url = 'wss://' + url;
+    }
+
+    const customWisps = getStoredWisps();
+
+    if (customWisps.some(w => w.url === url) || WISP_SERVERS.some(w => w.url === url)) {
+        notify('warning', 'Already Exists', 'This server is already in the list.');
+        return;
+    }
+
+    const newServer = {
+        group: "Custom",
+        name: `Custom ${customWisps.length + 1}`,
+        url
+    };
+
+    customWisps.push(newServer);
+    localStorage.setItem('customWisps', JSON.stringify(customWisps));
+
+    setWisp(url);
+
+    input.value = '';
+}
+
+window.deleteCustomWisp = function (urlToDelete) {
+    if (!confirm("Remove this server?")) return;
+
+    let customWisps = getStoredWisps().filter(w => w.url !== urlToDelete);
+    localStorage.setItem('customWisps', JSON.stringify(customWisps));
+
+    if (localStorage.getItem('proxServer') === urlToDelete) {
+        setWisp(DEFAULT_WISP);
+    } else {
+        renderServerList();
+    }
+};
+
+async function checkServerHealth(url, element) {
+    const dot = element.querySelector('.status-indicator');
+    const text = element.querySelector('.ping-text');
+
+    dot.classList.remove('status-success', 'status-error');
+    text.textContent = "...";
+
+    const start = Date.now();
+    let finished = false;
+
+    function markOffline() {
+        if (finished) return;
+        finished = true;
+
+        dot.classList.remove('status-success');
+        dot.classList.add('status-error');
+        text.textContent = "Offline";
+    }
+
+    try {
+        const ws = new WebSocket(url);
+
+        const timeout = setTimeout(() => {
+            if (ws.readyState !== WebSocket.OPEN) {
+                try { ws.close(); } catch {}
+                markOffline();
+            }
+        }, 5000);
+
+        ws.onopen = () => {
+            if (finished) return;
+
+            finished = true;
+            clearTimeout(timeout);
+
+            const latency = Date.now() - start;
+
+            dot.classList.remove('status-error');
+            dot.classList.add('status-success');
+            text.textContent = `${latency}ms`;
+
+            try { ws.close(); } catch {}
+        };
+
+        ws.onerror = () => {
+            clearTimeout(timeout);
+            markOffline();
+        };
+
+        ws.onclose = () => {
+            if (!finished) {
+                clearTimeout(timeout);
+                markOffline();
+            }
+        };
+
+    } catch {
+        markOffline();
+    }
+}
+
+async function setWisp(url) {
+    const oldUrl = localStorage.getItem("proxServer");
+
+    if (oldUrl === url) return;
+
+    localStorage.setItem("proxServer", url);
+
+    if (typeof trackWispServer === "function") {
+        trackWispServer(url);
+    }
+
+    const serverName =
+        [...WISP_SERVERS, ...getStoredWisps()]
+            .find(s => s.url === url)?.name ?? "Custom Server";
+
+    notify(
+        "info",
+        "Proxy Changed",
+        `Switching to ${serverName}...`
+    );
+
+    try {
+        const transport = localStorage.getItem("proxyTransport") ?? "epoxy";
+
+        const transportUrls = {
+            epoxy: "https://cdn.jsdelivr.net/npm/@mercuryworkshop/epoxy-transport@2.1.28/dist/index.mjs",
+            libcurl: "https://cdn.jsdelivr.net/npm/@mercuryworkshop/libcurl-transport@1/dist/index.mjs"
+        };
+
+        const transportUrl =
+            transportUrls[transport] ?? transportUrls.epoxy;
+
+        // Update the existing BareMux connection.
+        if (sharedConnection) {
+            await sharedConnection.setTransport(
+                transportUrl,
+                [{ wisp: url }]
+            );
+        } else {
+            await getSharedConnection();
+        }
+
+        // Update the service worker too.
+        navigator.serviceWorker.controller?.postMessage({
+            type: "config",
+            wispurl: url
+        });
+
+        for (const tab of tabs) {
+            if (!tab?.frame?.frame) continue;
+
+            try {
+                const frameWindow = tab.frame.frame.contentWindow;
+
+                if (frameWindow) {
+                    frameWindow.location.reload();
+                } else {
+                    tab.frame.frame.contentWindow.location.reload();
+                }
+            } catch (error) {
+                console.warn(
+                    `Could not reload Scramjet tab ${tab.id}:`,
+                    error
+                );
+            }
+        }
+
+        updateTabsUI();
+        updateAddressBar();
+        renderServerList();
+
+        notify(
+            "success",
+            "Proxy Changed",
+            `Now using ${serverName}`
+        );
+
+    } catch (error) {
+        console.error("Failed to switch Wisp:", error);
+
+        notify(
+            "error",
+            "Proxy Change Failed",
+            error.message
+        );
+    }
+}
+
+
+function initializeAutoswitchSetting() {
+    const toggle = document.getElementById('autoswitch-toggle');
+
+    if (!toggle) return;
+
+    const updateToggle = () => {
+        const enabled = localStorage.getItem('wispAutoswitch') !== 'false';
+        toggle.classList.toggle('active', enabled);
+    };
+
+    updateToggle();
+
+    toggle.onclick = function () {
+        const enabled = localStorage.getItem('wispAutoswitch') !== 'false';
+        const newState = !enabled;
+
+        localStorage.setItem('wispAutoswitch', String(newState));
+
+        toggle.classList.toggle('active', newState);
+
+        navigator.serviceWorker.controller?.postMessage({
+            type: 'config',
+            autoswitch: newState
+        });
+
+        notify(
+            'success',
+            'Settings Saved',
+            `Auto-switch ${newState ? 'Enabled' : 'Disabled'}`
+        );
+    };
+}
+
+// =====================================================
+// UTILITIES
+// =====================================================
+let devToolsOpen = false;
+
+function toggleDevTools() {
+    const win = getActiveTab()?.frame.frame.contentWindow;
+    if (!win) return;
+
+    if (win.eruda) {
+        if (devToolsOpen) {
+            win.eruda.hide();
+            devToolsOpen = false;
+        } else {
+            win.eruda.show();
+            win.eruda.get('entryBtn').hide();
+            devToolsOpen = true;
+        }
+        return;
+    }
+
+    const script = win.document.createElement('script');
+    script.src = "https://cdn.jsdelivr.net/npm/eruda";
+    script.onload = () => {
+        win.eruda.init();
+        win.eruda.get('entryBtn').hide();
+        win.eruda.show();
+        devToolsOpen = true;
+    };
+    win.document.body.appendChild(script);
+}
+
+async function checkHashParameters() {
+    if (window.location.hash) {
+        const hash = decodeURIComponent(window.location.hash.substring(1));
+        if (hash) handleSubmit(hash);
+        history.replaceState(null, null, location.pathname);
+    }
+}
+
+
+
+
+
+
+// =====================================================
+// MAIN INITIALIZATION
+// =====================================================
+document.addEventListener('DOMContentLoaded', async function () {
+    try {
+        await initializeCloseProtection();
+        // Proactively find the best server before initializing
+        await initializeWithBestServer();
+        
+        await getSharedScramjet();
+        await getSharedConnection();
+
+        if ('serviceWorker' in navigator) {
+            const reg = await navigator.serviceWorker.register(getBasePath() + 'sw.js', { scope: getBasePath() });
+            
+            // Wait for SW to be ready
+            await navigator.serviceWorker.ready;
+            
+            const wispUrl = startupWisp || localStorage.getItem("proxServer") || DEFAULT_WISP;
+            const allServers = getAllWispServers();
+            const autoswitch = localStorage.getItem('wispAutoswitch') !== 'false';
+            
+            const swConfig = {
+                type: "config",
+                wispurl: wispUrl,
+                servers: allServers,
+                autoswitch: autoswitch
+            };
+
+            // Send config to SW
+            const sendConfig = async () => {
+                const sw = reg.active || navigator.serviceWorker.controller;
+                if (sw) {
+                    console.log("Sending config to SW:", swConfig);
+                    sw.postMessage(swConfig);
+                }
+            };
+
+            // Try sending immediately, then retry if needed
+            sendConfig();
+            setTimeout(sendConfig, 500);
+            setTimeout(sendConfig, 1500);
+
+            navigator.serviceWorker.addEventListener('message', (event) => {
+                const { type, url, name, message } = event.data;
+                if (type === 'wispChanged') {
+                    console.log("SW reported Wisp Change:", event.data);
+                    localStorage.setItem("proxServer", url);
+                    notify('info', 'Autoswitched Proxy', `Now using ${name} because the previous server was slow or offline.`);
+                } else if (type === 'wispError') {
+                    console.error("SW reported Wisp Error:", event.data);
+                    notify('error', 'Proxy Error', message);
+                }
+            });
+
+            reg.update();
+        }
+
+        await initializeBrowser();
+    } catch (err) {
+    console.error("Initialization error:", err);
+
+    document.body.innerHTML = `
+        <div style="
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            height:100vh;
+            background:#0a0a0a;
+            color:white;
+            font-family:Inter,sans-serif;
+            text-align:center;
+            padding:20px;
+        ">
+            <div>
+                <h1>Initialization Failed</h1>
+                <p>${err.message}</p>
+                <button
+                    onclick="location.reload()"
+                    style="
+                        margin-top:20px;
+                        padding:10px 20px;
+                        border:none;
+                        border-radius:8px;
+                        cursor:pointer;
+                        font-size:16px;
+                    "
+                >
+                    Refresh
+                </button>
+                <br> <br>
+                <small>If the problem continues, try switching to a desktop or different browser. </small>
+            </div>
+        </div>
+            <!--temporary eruda dev tools for testing--->
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<script>
+eruda.init();
+</script>
+    `;
+        eruda.init();
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// =====================================================
+// EXTENSIONS
+// =====================================================
+
+function startBackground(extension, code) {
+
+    const zinc = {
+
+        runtime: {
+            id: extension.id,
+            manifest: extension.manifest
+        },
+
+tabs: {
+    getActive() {
+        const tab = getActiveTab();
+        return tab ? { url: tab.url } : null;
+    },
+
+    executeScript(script) {
+        return runInActiveFrame(script);
+    }
+},
+
+storage: {
+    get(key) {
+        return new Promise(resolve => {
+            const id = Math.random().toString(36).slice(2);
+
+            function listener(event) {
+                if (
+                    event.data?.type === "zinc-storage-response" &&
+                    event.data.id === id
+                ) {
+                    window.removeEventListener("message", listener);
+                    resolve(event.data.value);
+                }
+            }
+
+            window.addEventListener("message", listener);
+
+            window.parent.postMessage({
+                type: "zinc-storage-get",
+                id,
+                extensionId: extension.id,
+                key
+            }, "*");
+        });
+    },
+
+    set(key, value) {
+        return new Promise(resolve => {
+            const id = Math.random().toString(36).slice(2);
+
+            function listener(event) {
+                if (
+                    event.data?.type === "zinc-storage-set-response" &&
+                    event.data.id === id
+                ) {
+                    window.removeEventListener("message", listener);
+                    resolve(true);
+                }
+            }
+
+            window.addEventListener("message", listener);
+
+            window.parent.postMessage({
+                type: "zinc-storage-set",
+                id,
+                extensionId: extension.id,
+                key,
+                value
+            }, "*");
+        });
+    }
+}
+
+    };
+
+    try {
+    new Function("zinc", code)(zinc);
+} catch (e) {
+    console.error(
+        `Background script failed for ${extension.id}:`,
+        e
+    );
+}
+
+}
+
+async function loadBackgroundScripts() {
+
+    const db = await openDB();
+
+    const tx = db.transaction(STORE_NAME, "readonly");
+
+    const req = tx.objectStore(STORE_NAME).getAll();
+
+    req.onsuccess = () => {
+
+        for (const extension of req.result) {
+
+            if (extension.enabled === false)
+                continue;
+
+            const background = extension.manifest.background;
+
+            if (!background)
+                continue;
+
+            const file = extension.files[background];
+
+            if (!file)
+                continue;
+
+            startBackground(extension, file.data);
+
+        }
+
+    };
+
+}
+
+loadBackgroundScripts();
+
+
+
+
+//show extensions in toolbar
+const extensionChannel = new BroadcastChannel("zinc-extensions");
+
+let renderingExtensions = false;
+let renderExtensionsAgain = false;
+
+extensionChannel.onmessage = async (event) => {
+    if (event.data?.type === "extensions-changed") {
+        await renderExtensions();
+    }
+};
+
+async function renderExtensions() {
+    const toolbar = document.getElementById("extension-toolbar");
+
+    if (!toolbar) return;
+
+    if (renderingExtensions) {
+        renderExtensionsAgain = true;
+        return;
+    }
+
+    renderingExtensions = true;
+
+    try {
+        const db = await openDB();
+
+        const extensions = await new Promise((resolve, reject) => {
+            const tx = db.transaction(STORE_NAME, "readonly");
+            const req = tx.objectStore(STORE_NAME).getAll();
+
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = () => reject(req.error);
+        });
+
+        toolbar.innerHTML = "";
+
+        for (const extension of extensions) {
+            if (extension.enabled === false) continue;
+
+            const iconPath = extension.manifest.icon;
+            if (!iconPath) continue;
+
+            const iconFile = extension.files[iconPath];
+            if (!iconFile) continue;
+
+            const img = document.createElement("img");
+
+            img.src = iconFile.data;
+            img.width = 24;
+            img.height = 20;
+            img.title = extension.manifest.name;
+            img.style.cursor = "pointer";
+            img.style.margin = "0 4px";
+            img.style.objectFit = "contain";
+            img.style.position = "relative";
+            img.style.top = "-0.4vh";
+
+            img.onclick = () => {
+                createTab(true);
+                openExtensionUrl(
+                    `extension://${extension.id}/${extension.manifest.popup || "popup.html"}`
+                );
+            };
+
+            toolbar.appendChild(img);
+        }
+
+                updateToolbarVisibility();
+        
+    } catch (error) {
+        console.error("Failed to render extensions:", error);
+    } finally {
+        renderingExtensions = false;
+
+        if (renderExtensionsAgain) {
+            renderExtensionsAgain = false;
+            renderExtensions();
+        }
+    }
+                           }

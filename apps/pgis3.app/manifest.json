@@ -1,0 +1,13 @@
+
+{
+  "name": "PGIS 3",
+  "type": "auto",
+  "package": "0800.pgis3",
+  "index": "index.html",
+  "wininfo": {
+    "title": "PGIS 3",
+    "width": "1100px",
+    "height": "750px",
+    "resizable": true
+  }
+}
