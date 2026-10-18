@@ -1,0 +1,13 @@
+
+{
+  "name": "Games",
+  "type": "auto",
+  "package": "0800.games",
+  "index": "index.html",
+  "wininfo": {
+    "title": "PGIS Games",
+    "width": "1100px",
+    "height": "750px",
+    "resizable": true
+  }
+}

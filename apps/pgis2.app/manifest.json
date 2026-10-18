@@ -1,0 +1,13 @@
+
+{
+  "name": "PGIS 2",
+  "type": "auto",
+  "package": "0800.pgis2",
+  "index": "index.html",
+  "wininfo": {
+    "title": "PGIS 2",
+    "width": "1100px",
+    "height": "750px",
+    "resizable": true
+  }
+}
