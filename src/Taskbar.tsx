@@ -31,8 +31,8 @@ class Taskbar {
 	});
 
 	rounded = css`
-		border-top-left-radius: 25px;
-		border-top-right-radius: 25px;
+		border-top-left-radius: 0px;
+		border-top-right-radius: 0px;
 		width: calc(100% - 2px);
 		border-left: 1px solid var(--theme-dark-border);
 		border-right: 1px solid var(--theme-dark-border);
