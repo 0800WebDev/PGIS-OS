@@ -59,11 +59,11 @@
 }
 
 #taskinfo-container {
-	border-radius: 5px 25px 25px 5px;
+	border-radius: 5px;
 }
 
 #date-container {
-	border-radius: 25px 5px 5px 25px;
+	border-radius: 5px;
 }
 
 #taskinfo-container .material-symbols-outlined {
